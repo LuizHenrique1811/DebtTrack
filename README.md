@@ -1,2 +1,2 @@
 # DebtTrack
-Who have the habit to land some money, but loose control of how mutch you have to recive? That's a simple solution for this problem
+Do you have a habit of lending money, only to lose track of what you're owed? There's a simple solution for that problem.
