@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  debtors  Debtor[]
+  accounts account[]
+}
+
+model Debtor {
+  id    String  @id @default(uuid())
+  name  String
+  email String?
+  phone String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  debts Debit[]
+}
+
+model Debit {
+  id             String      @id @default(uuid())
+  description    String
+  totalAmount    Decimal     @db.Decimal(10, 2)
+  installmentQty Int // Quantidade de parcelas
+  startDate      DateTime
+  dueDay         Int // dia do mês para vencimento
+  status         DebitStatus @default(ACTIVE)
+
+  // Relacionamento com Debtor
+  debtorId String
+  debtor   Debtor @relation(fields: [debtorId], references: [id])
+
+  // Relação com Conta
+  accountId String
+  account   account @relation(fields: [accountId], references: [id])
+
+  // Relação com Parcelas (Installments)
+  installments Installment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum DebitStatus {
+  ACTIVE
+  PAID
+  CANCELLED
+}
+
+model Installment {
+  id       String            @id @default(uuid())
+  amount   Decimal           @db.Decimal(10, 2)
+  dueDate  DateTime
+  paidDate DateTime?
+  status   InstallmentStatus @default(PENDING)
+
+  // Relação com Pagamentos
+  payments Payment[]
+
+  debitId String
+  debit   Debit  @relation(fields: [debitId], references: [id])
+}
+
+enum InstallmentStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  amount      Decimal  @db.Decimal(10, 2)
+  paymentDate DateTime
+
+  installmentId String
+  installment   Installment @relation(fields: [installmentId], references: [id])
+}
+
+model account {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relação com Usuário
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Relação com Débitos
+  debts Debit[]
+}
