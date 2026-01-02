@@ -86,6 +86,8 @@ model Installment {
 enum InstallmentStatus {
   PENDING
   PAID
+  PARTIALLY_PAID
+  OVERDUE
   CANCELLED
 }
 
