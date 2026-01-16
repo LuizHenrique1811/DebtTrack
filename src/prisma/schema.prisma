@@ -24,7 +24,7 @@ model User {
 
   // Relacionamentos
   debtors  Debtor[]
-  accounts account[]
+  accounts Account[]
 }
 
 model Debtor {
@@ -54,7 +54,7 @@ model Debit {
 
   // Relação com Conta
   accountId String
-  account   account @relation(fields: [accountId], references: [id])
+  account   Account @relation(fields: [accountId], references: [id])
 
   // Relação com Parcelas (Installments)
   installments Installment[]
@@ -100,7 +100,7 @@ model Payment {
   installment   Installment @relation(fields: [installmentId], references: [id])
 }
 
-model account {
+model Account {
   id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())

@@ -211,7 +211,7 @@ exports.Prisma.ModelName = {
   Debit: 'Debit',
   Installment: 'Installment',
   Payment: 'Payment',
-  account: 'account'
+  Account: 'Account'
 };
 
 /**
