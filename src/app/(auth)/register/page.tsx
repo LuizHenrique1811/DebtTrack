@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SubmitHandler, SubmitErrorHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { registerAction } from "../../../actions/auth/register.action";
 import {
   type RegisterSchema,
@@ -19,24 +19,25 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onValid: SubmitHandler<RegisterSchema> = async (data) => {
-    
-    const formData = new FormData();
-    Object.entries(data).forEach(([key,value]) =>  {
-      formData.append(key,value);
-    })
+  const onSubmit = async (data: RegisterSchema) => {
+    const result = await registerAction(data);
 
-    registerAction(formData);
-  }
-
-  const onInvalid: SubmitErrorHandler<RegisterSchema> = (errors) => {
-    console.error("Falha na validação local:", errors);
-  }
+    if (!result.success && result.errors) {
+      Object.entries(result.errors).forEach(([field, message]) => {
+        if (message && message.length > 0) {
+          setError(field as keyof RegisterSchema, {
+            type: "server",
+            message: message[0],
+          });
+        }
+      });
+    }
+  };
 
   return (
     <main className="max-w-md w-full">
       <h1 className="text-2xl font-bold text-center mb-4">Cadastro</h1>
-      <form className="flex flex-col gap-2" onSubmit={handleSubmit(onValid,onInvalid)}>
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="name">Nome</label>
         <input
           type="text"
