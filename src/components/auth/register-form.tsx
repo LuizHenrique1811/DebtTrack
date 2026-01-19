@@ -1,0 +1,80 @@
+// components/auth/register-form.tsx
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerAction } from "@/actions/auth/register.action";
+import { type RegisterSchema, registerSchema } from "@/core/validators/register.schema";
+import { FormInput } from "@/components/ui/form-input";
+
+export function RegisterForm() {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  const onSubmit = async (data: RegisterSchema) => {
+    const result = await registerAction(data);
+
+    if (!result.success && result.errors) {
+      Object.entries(result.errors).forEach(([field, messages]) => {
+        if (messages && messages.length > 0) {
+            setError(field as keyof RegisterSchema, {
+                type: "server",
+                message: messages[0]
+            });
+        }
+      });
+    } else {
+        // Sucesso! Redirecionar ou mostrar toast
+        console.log("Sucesso!");
+    }
+  };
+
+  return (
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <FormInput
+        label="Nome Completo"
+        placeholder="Seu nome"
+        registration={register("name")}
+        error={errors.name?.message}
+      />
+
+      <FormInput
+        label="E-mail"
+        type="email"
+        placeholder="seu@email.com"
+        registration={register("email")}
+        error={errors.email?.message}
+      />
+
+      <FormInput
+        label="Senha"
+        type="password"
+        placeholder="******"
+        registration={register("password")}
+        error={errors.password?.message}
+      />
+      
+      <FormInput
+        label="Confirmar Senha"
+        type="password"
+        placeholder="******"
+        registration={register("confirmPassword")}
+        error={errors.confirmPassword?.message}
+      />
+
+      <button 
+        type="submit" 
+        disabled={isSubmitting}
+        className="bg-green-600 text-white p-2 rounded hover:bg-green-700 disabled:opacity-50"
+      >
+        {isSubmitting ? "Cadastrando..." : "Criar Conta"}
+      </button>
+    </form>
+  );
+}
