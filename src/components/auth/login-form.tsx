@@ -1,11 +1,11 @@
 "use client";
 
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormInput } from "@/components/ui/form-input";
-import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
-import { useForm } from "react-hook-form";
+import { FormButton } from "@/components/ui/form-button";
 import { loginAction } from "@/actions/auth/login.action";
-import { FormButton } from "../ui/form-button";
+import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
 
 export function LoginForm() {
 
@@ -52,7 +52,7 @@ export function LoginForm() {
                 registration={register("password")}
                 error={errors.password?.message}
             />
-            <FormButton isLoading={isSubmitting} variant="primary">
+            <FormButton loadingText="Entrando..." isLoading={isSubmitting} variant="green">
                 Entrar
             </FormButton>
         </form>
