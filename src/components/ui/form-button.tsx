@@ -5,15 +5,16 @@ import { twMerge } from "tailwind-merge";
 interface FormButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     isLoading?: boolean;
-    variant?: "primary" | "secondary" | "danger";
+    loadingText?: string;
+    variant?: "green" | "gray" | "red";
 }
 
-export function FormButton({ children, isLoading = false, variant = "primary", className, disabled, ...props }: FormButtonProps) {
+export function FormButton({ children, isLoading = false, loadingText = "Carregando...", variant = "green", className, disabled, ...props }: FormButtonProps) {
 
     const variants = {
-        primary: "bg-green-600 hover:bg-green-700",
-        secondary: "bg-gray-600 hover:bg-gray-700",
-        danger: "bg-red-600 hover:bg-red-700 "
+        green: "bg-green-600 hover:bg-green-700",
+        gray: "bg-gray-600 hover:bg-gray-700",
+        red: "bg-red-600 hover:bg-red-700 "
     }
 
     return (
@@ -31,7 +32,7 @@ export function FormButton({ children, isLoading = false, variant = "primary", c
             {isLoading ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    <span className="animate-pulse">Carregando...</span>
+                    <span className="animate-pulse">{loadingText}</span>
                 </>
             ) : (
                 children

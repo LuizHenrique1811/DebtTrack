@@ -68,7 +68,7 @@ export function RegisterForm() {
                 error={errors.confirmPassword?.message}
             />
 
-            <FormButton isLoading={isSubmitting} variant="primary">
+            <FormButton loadingText="Cadastrando..." isLoading={isSubmitting} variant="green">
                 Criar Conta
             </FormButton>
         </form>
