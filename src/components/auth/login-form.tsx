@@ -21,7 +21,7 @@ export function LoginForm() {
     const onSubmit = async (data: LoginSchema) => {
         const result = await loginAction(data);
         if (!result.success && result.errors) {
-            Object.entries(result.errors).forEach(([field, messages]) => {
+            Object.entries(result.errors).forEach(([field, mess'ages]) => {
                 if (messages && messages.length > 0) {
                     setError(field as keyof LoginSchema, {
                         type: "server",
