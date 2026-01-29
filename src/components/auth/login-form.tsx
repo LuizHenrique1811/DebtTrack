@@ -6,6 +6,7 @@ import { FormInput } from "@/components/ui/form-input";
 import { FormButton } from "@/components/ui/form-button";
 import { loginAction } from "@/actions/auth/login.action";
 import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
+import { redirect } from "next/navigation";
 
 export function LoginForm() {
 
@@ -21,7 +22,7 @@ export function LoginForm() {
     const onSubmit = async (data: LoginSchema) => {
         const result = await loginAction(data);
         if (!result.success && result.errors) {
-            Object.entries(result.errors).forEach(([field, mess'ages]) => {
+            Object.entries(result.errors).forEach(([field, messages]) => {
                 if (messages && messages.length > 0) {
                     setError(field as keyof LoginSchema, {
                         type: "server",
@@ -29,10 +30,10 @@ export function LoginForm() {
                     });
                 }
             });
-        }
-        else {
+        } else {
             // Sucesso! Redirecionar ou mostrar toast
             console.log("Sucesso!");
+            redirect("/dashboard");
         }
     }
 

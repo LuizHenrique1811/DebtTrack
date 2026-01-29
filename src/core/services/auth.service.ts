@@ -28,7 +28,7 @@ export async function createUser(data: RegisterSchema) {
 }
 
 export async function login(data: LoginSchema) {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
       email: data.email,
     },
@@ -41,3 +41,22 @@ export async function login(data: LoginSchema) {
     throw new InvalidCredentialsError();
   }
 }
+
+export class AuthService {
+    static async validateCredentials(email: string, password: string) {
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+  
+      if (!user) return null;
+  
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) return null;
+  
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      };
+    }
+  }
