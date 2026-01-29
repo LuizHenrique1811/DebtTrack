@@ -5,10 +5,13 @@ import { login } from "@/core/services/auth.service";
 import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
 
 export async function loginAction(data: LoginSchema) {
+    
     const validatedData = loginSchema.safeParse(data);
+
     if (!validatedData.success) {
         return { errors: validatedData.error.flatten().fieldErrors };
     }
+
     try {
         await login(validatedData.data);
         return { success: true };
