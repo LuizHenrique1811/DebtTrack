@@ -8,6 +8,7 @@ import { loginAction } from "@/actions/auth/login.action";
 import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
 import { redirect } from "next/navigation";
 
+
 export function LoginForm() {
 
     const {
@@ -31,8 +32,6 @@ export function LoginForm() {
                 }
             });
         } else {
-            // Sucesso! Redirecionar ou mostrar toast
-            console.log("Sucesso!");
             redirect("/dashboard");
         }
     }
