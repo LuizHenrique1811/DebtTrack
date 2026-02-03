@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-export async function middleware(req: Request) {
+export async function proxy(req: Request) {
   const session = await auth();
 
   if (!session) {

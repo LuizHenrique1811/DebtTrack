@@ -1,24 +1,46 @@
 "use server";
 
-import { InvalidCredentialsError } from "@/core/errors/auth.errors";
-import { login } from "@/core/services/auth.service";
+import { signIn } from "@/auth";
 import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
 
 export async function loginAction(data: LoginSchema) {
-    
+
     const validatedData = loginSchema.safeParse(data);
 
     if (!validatedData.success) {
         return { errors: validatedData.error.flatten().fieldErrors };
     }
 
+    const { email, password } = validatedData.data;
+
     try {
-        await login(validatedData.data);
+        await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+        });
         return { success: true };
     } catch (error) {
-        if (error instanceof InvalidCredentialsError) {
-            return { success: false, errors: { email: [error.message], password: [error.message] } };
+        if (error instanceof Error && error.name === "AuthError" && "type" in error) {
+            switch (error.type) {
+                case "CredentialsSignin":
+                return {
+                    success: false,
+                    errors: {
+                    email: ["Credenciais inválidas."],
+                    password: ["Verifique sua senha."],
+                    },
+                };
+                default:
+                return {
+                    success: false,
+                    errors: { email: ["Erro ao conectar ao serviço de autenticação."] },
+                };
+            }
         }
-        return { success: false, errors: { email: ["Erro ao fazer login"] } };
+        return {
+        success: false,
+        errors: { email: ["Erro ao fazer login."] },
+        };
     }
 }

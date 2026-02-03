@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { RegisterSchema } from "@/core/validators/register.schema";
-import { LoginSchema } from "@/core/validators/login.schema";
 import { UserAlreadyExistsError, InvalidCredentialsError } from "@/core/errors/auth.errors";
 
 export async function createUser(data: RegisterSchema) {
@@ -25,21 +24,6 @@ export async function createUser(data: RegisterSchema) {
       password: hashedPassword,
     },
   });
-}
-
-export async function login(data: LoginSchema) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: data.email,
-    },
-  });
-  if (!user) {
-    throw new InvalidCredentialsError();
-  }
-  const isPasswordValid = await bcrypt.compare(data.password, user.password);
-  if (!isPasswordValid) {
-    throw new InvalidCredentialsError();
-  }
 }
 
 export class AuthService {
