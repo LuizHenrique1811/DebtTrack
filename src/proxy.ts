@@ -1,16 +1,21 @@
 import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function proxy(req: Request) {
-  const session = await auth();
+export async function proxy(req: NextRequest) {
+    const { nextUrl } = req;
+    const session = await auth();
 
-  if (!session) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+    if (!session) {
+        return NextResponse.redirect(new URL("/login", req.url));
+    }
 
-  return NextResponse.next();
-}
+    if (nextUrl.pathname === "/") {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
 
-export const config = {
-  matcher: ["/dashboard/:path*"],
+    return NextResponse.next();
+    }
+
+    export const config = {
+    matcher: ["/", "/dashboard/:path*"],
 };

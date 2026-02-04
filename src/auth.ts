@@ -21,7 +21,12 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       },
 
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (
+          !credentials?.email ||
+          !credentials?.password ||
+          typeof credentials.email !== "string" ||
+          typeof credentials.password !== "string"
+        ) {
           return null;
         }
 
@@ -37,15 +42,15 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
   callbacks: {
     async jwt({ token, user }) {
-        if (user) {
-          token.id = user.id;
-        }
-        return token;
+      if (user && typeof user.id === "string") {
+        token.id = user.id;
+      }
+      return token;
     },
 
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
+      if (session.user && typeof token.id === "string") {
+        session.user.id = token.id;
       }
       return session;
     },
