@@ -7,7 +7,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   registration: UseFormRegisterReturn; 
 }
 
-export function FormInput({ label, error, registration, className, ...props }: FormInputProps) {
+export function Input({ label, error, registration, className, ...props }: FormInputProps) {
   
   const inputId = props.id || registration.name;
 

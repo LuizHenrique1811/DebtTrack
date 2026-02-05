@@ -2,14 +2,14 @@ import { Loader2 } from "lucide-react";
 import { ButtonHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
-interface FormButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     isLoading?: boolean;
     loadingText?: string;
     variant?: "green" | "gray" | "red";
 }
 
-export function FormButton({ children, isLoading = false, loadingText = "Carregando...", variant = "green", className, disabled, ...props }: FormButtonProps) {
+export function Button({ children, isLoading = false, loadingText = "Carregando...", variant = "green", className, disabled, ...props }: ButtonProps) {
 
     const variants = {
         green: "bg-green-600 hover:bg-green-700",

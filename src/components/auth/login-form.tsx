@@ -2,8 +2,8 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormInput } from "@/components/ui/form-input";
-import { FormButton } from "@/components/ui/form-button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { loginAction } from "@/actions/auth/login.action";
 import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
 import { redirect } from "next/navigation";
@@ -38,23 +38,23 @@ export function LoginForm() {
 
     return (
         <form className="flex flex-col gap-4" onSubmit={(handleSubmit(onSubmit))}>
-            <FormInput
+            <Input
                 label="Email"
                 type="email"
                 placeholder="seu@email.com"
                 registration={register("email")}
                 error={errors.email?.message}
             />
-            <FormInput
+            <Input
                 label="Senha"
                 type="password"
                 placeholder="******"
                 registration={register("password")}
                 error={errors.password?.message}
             />
-            <FormButton loadingText="Entrando..." isLoading={isSubmitting} variant="green">
+            <Button loadingText="Entrando..." isLoading={isSubmitting} variant="green">
                 Entrar
-            </FormButton>
+            </Button>
         </form>
     );
 }
