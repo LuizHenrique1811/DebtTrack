@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { debtorSchema, DebtorSchema } from "@/core/validators/debtor.schema";
 import { createDebtorAction } from "@/actions/debtor/debtor.action";
 
-export function DashboardForm() {
+export function DebtorForm() {
 
     const {
         register,
