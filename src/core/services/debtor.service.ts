@@ -19,3 +19,18 @@ export async function createDebtor(userId: string, data: DebtorSchema) {
     });
     return debtor;
 }
+
+export async function updateDebtor(id: string, data: DebtorSchema) {
+    const debtor = await prisma.debtor.update({
+        where: { id },
+        data,
+    });
+    return debtor;
+}
+
+export async function deleteDebtor(id: string) {
+    const debtor = await prisma.debtor.delete({
+        where: { id },
+    });
+    return debtor;
+}

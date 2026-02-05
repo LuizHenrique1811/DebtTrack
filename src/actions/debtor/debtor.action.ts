@@ -1,7 +1,7 @@
 "use server";
 
 import { getCurrentUser } from "@/core/services/current-user.service";
-import { createDebtor, getDebtors } from "@/core/services/debtor.service";
+import { createDebtor, getDebtors, updateDebtor, deleteDebtor } from "@/core/services/debtor.service";
 import { debtorSchema, DebtorSchema } from "@/core/validators/debtor.schema";
 import { revalidatePath } from "next/cache";
 
@@ -54,7 +54,36 @@ export async function createDebtorAction(data: DebtorSchema) {
         };
     } catch (error) {
         return {
-            error: "Erro ao buscar devedores",
+            error: "Erro ao criar devedor",
+        };
+    }
+}
+
+export async function editDebtorAction(id: string, data: DebtorSchema) {
+    try {
+        const debtor = await updateDebtor(id, data);
+        revalidatePath("/dashboard/debtors");
+        return {
+            success: true,
+            debtor,
+        };
+    } catch (error) {
+        return {
+            error: "Erro ao editar devedor",
+        };
+    }
+}
+
+export async function deleteDebtorAction(id: string) {
+    try {
+        await deleteDebtor(id);
+        revalidatePath("/dashboard/debtors");
+        return {
+            success: true,
+        };
+    } catch (error) {
+        return {
+            error: "Erro ao excluir devedor",
         };
     }
 }

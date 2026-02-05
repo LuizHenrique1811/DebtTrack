@@ -1,9 +1,9 @@
-import { DashboardForm } from "@/components/dashboard/dashboard-form";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { DebtorForm } from "@/components/debtor/debtor-form";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-export function DashboardDialog({ className }: { className?: string }) {
+export function DebtorDialog({ className }: { className?: string }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -13,7 +13,8 @@ export function DashboardDialog({ className }: { className?: string }) {
                 </Button>
             </DialogTrigger>
             <DialogContent className={className}>
-                <DashboardForm />
+                <DialogTitle className="sr-only">Adicionar Devedor</DialogTitle>
+                <DebtorForm />
             </DialogContent>
         </Dialog>
     );
