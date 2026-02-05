@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerAction } from "@/actions/auth/register.action";
 import { type RegisterSchema, registerSchema } from "@/core/validators/register.schema";
-import { FormInput } from "@/components/ui/form-input";
-import { FormButton } from "../ui/form-button";
+import { FormInput } from "@/components/ui/input";
+import { Button } from "../ui/button";
 
 export function RegisterForm() {
     const {
@@ -68,9 +68,9 @@ export function RegisterForm() {
                 error={errors.confirmPassword?.message}
             />
 
-            <FormButton loadingText="Cadastrando..." isLoading={isSubmitting} variant="green">
+            <Button loadingText="Cadastrando..." isLoading={isSubmitting} variant="green">
                 Criar Conta
-            </FormButton>
+            </Button>
         </form>
     );
 }

@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/core/services/current-user.service";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const user = await getCurrentUser();
 
   return (
-    <h2>Bem-vindo {session?.user?.name}</h2>
+    <h2>Bem-vindo {user?.name}</h2>
     ); 
 }       
