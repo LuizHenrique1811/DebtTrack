@@ -31,8 +31,6 @@ export function LoginForm() {
                     });
                 }
             });
-        } else {
-            redirect("/dashboard");
         }
     }
 
