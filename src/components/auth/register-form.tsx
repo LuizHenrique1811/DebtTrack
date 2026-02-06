@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerAction } from "@/actions/auth/register.action";
 import { type RegisterSchema, registerSchema } from "@/core/validators/register.schema";
-import { FormInput } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 
 export function RegisterForm() {
@@ -29,22 +29,19 @@ export function RegisterForm() {
                     });
                 }
             });
-        } else {
-            // Sucesso! Redirecionar ou mostrar toast
-            console.log("Sucesso!");
         }
     };
 
     return (
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-            <FormInput
+            <Input
                 label="Nome Completo"
                 placeholder="Seu nome"
                 registration={register("name")}
                 error={errors.name?.message}
             />
 
-            <FormInput
+            <Input
                 label="E-mail"
                 type="email"
                 placeholder="seu@email.com"
@@ -52,7 +49,7 @@ export function RegisterForm() {
                 error={errors.email?.message}
             />
 
-            <FormInput
+            <Input
                 label="Senha"
                 type="password"
                 placeholder="******"
@@ -60,7 +57,7 @@ export function RegisterForm() {
                 error={errors.password?.message}
             />
 
-            <FormInput
+            <Input
                 label="Confirmar Senha"
                 type="password"
                 placeholder="******"

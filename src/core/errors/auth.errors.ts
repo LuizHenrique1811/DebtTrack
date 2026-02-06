@@ -11,6 +11,12 @@ export class AppError extends Error {
       this.name = 'UserAlreadyExistsError';
     }
   }
+  export class UserNotFoundError extends AppError {
+    constructor() {
+      super('Usuário não encontrado.');
+      this.name = 'UserNotFoundError';
+    }
+  }
   
   export class InvalidCredentialsError extends AppError {
     constructor() {

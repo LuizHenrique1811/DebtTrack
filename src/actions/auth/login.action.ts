@@ -2,6 +2,7 @@
 
 import { signIn } from "@/auth";
 import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
+import { redirect } from "next/navigation";
 
 export async function loginAction(data: LoginSchema) {
   const validatedData = loginSchema.safeParse(data);
@@ -18,7 +19,6 @@ export async function loginAction(data: LoginSchema) {
       password,
       redirect: false,
     });
-    return { success: true };
   } catch (error) {
     if (
       error instanceof Error &&
@@ -46,4 +46,6 @@ export async function loginAction(data: LoginSchema) {
       errors: { email: ["Erro ao fazer login."] },
     };
   }
+
+  redirect("/dashboard");
 }
