@@ -60,6 +60,14 @@ export async function createDebtorAction(data: DebtorSchema) {
 }
 
 export async function editDebtorAction(id: string, data: DebtorSchema) {
+
+    const validatedData = debtorSchema.safeParse(data);
+    if (!validatedData.success) {
+        return {
+            errors: validatedData.error.flatten().fieldErrors,
+        };
+    }
+
     try {
         const debtor = await updateDebtor(id, data);
         revalidatePath("/dashboard/debtors");

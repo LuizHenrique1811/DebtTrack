@@ -2,7 +2,8 @@
 
 import { Debtor } from "@/app/generated/prisma";
 import { deleteDebtorAction } from "@/actions/debtor/debtor.action";
-import { User, Mail, Phone, Trash } from "lucide-react";
+import { User, Pencil, Mail, Phone, Trash } from "lucide-react";
+import { DebtorDialog } from "@/components/debtor/debtor-dialog";
 
 export function DebtorCard({ debtor }: { debtor: Debtor }) {
     return (
@@ -38,7 +39,7 @@ export function DebtorCard({ debtor }: { debtor: Debtor }) {
                     ) : null}
                 </div>
                 <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100" >
-                    {/* <Pencil onClick={() => editDebtorAction(debtor.id)} className="w-4 h-4 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400" /> */}
+                    <DebtorDialog className="max-w-2xl" debtor={debtor} />
                     <Trash onClick={() => deleteDebtorAction(debtor.id)} className="w-4 h-4 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400" />
                 </div>
             </div>

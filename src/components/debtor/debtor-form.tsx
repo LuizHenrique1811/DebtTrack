@@ -5,9 +5,10 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { debtorSchema, DebtorSchema } from "@/core/validators/debtor.schema";
-import { createDebtorAction } from "@/actions/debtor/debtor.action";
+import { createDebtorAction, editDebtorAction } from "@/actions/debtor/debtor.action";
+import { Debtor } from "@/app/generated/prisma";
 
-export function DebtorForm() {
+export function DebtorForm({ debtor }: { debtor?: Debtor }) {
 
     const {
         register,
@@ -20,7 +21,8 @@ export function DebtorForm() {
     });
 
     const onSubmit = async (data: DebtorSchema) => {
-        const result = await createDebtorAction(data);
+        const result = debtor ? await editDebtorAction(debtor.id, data) : await createDebtorAction(data);
+        
         if (!result.success && result.errors) {
             Object.entries(result.errors).forEach(([field, messages]) => {
                 if (messages && messages.length > 0) {
@@ -45,6 +47,7 @@ export function DebtorForm() {
                 placeholder="Nome do devedor"
                 registration={register("name")}
                 error={errors.name?.message}
+                defaultValue={debtor?.name ?? ""}
             />
             <Input
                 label="Email"
@@ -52,6 +55,7 @@ export function DebtorForm() {
                 placeholder="devedor@email.com"
                 registration={register("email")}
                 error={errors.email?.message}
+                defaultValue={debtor?.email ?? ""}
             />
             <Input label="Telefone"
                 type="tel"
@@ -61,9 +65,10 @@ export function DebtorForm() {
                 maxLength={14}
                 registration={register("phone")}
                 error={errors.phone?.message}
+                defaultValue={debtor?.phone ?? ""}
             />
             <Button loadingText="Adicionando..." isLoading={isSubmitting} variant="green">
-                Adicionar Devedor
+                {debtor ? "Atualizar Devedor" : "Adicionar Devedor"}
             </Button>
         </form>
     );
