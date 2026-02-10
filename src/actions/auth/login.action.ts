@@ -21,12 +21,16 @@ export async function loginAction(data: LoginSchema) {
     });
   } catch (error) {
     if (
-      error instanceof Error &&
-      error.name === "AuthError" &&
-      "type" in error
+        error instanceof Error &&
+        error.name === "CredentialsSignin" &&
+        "type" in error
     ) {
-      switch (error.type) {
-        case "CredentialsSignin":
+        
+        console.log("Dentro do if")
+        switch (error.type) {
+            case "CredentialsSignin":
+            console.log("Dentro do switch")
+            console.error("Erro ao fazer login:", error);
           return {
             success: false,
             errors: {
