@@ -2,7 +2,7 @@
 
 import { Debtor } from "@/app/generated/prisma";
 import { deleteDebtorAction } from "@/actions/debtor/debtor.action";
-import { User, Pencil, Mail, Phone, Trash } from "lucide-react";
+import { User, Mail, Phone, Trash } from "lucide-react";
 import { DebtorDialog } from "@/components/debtor/debtor-dialog";
 
 export function DebtorCard({ debtor }: { debtor: Debtor }) {
