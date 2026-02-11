@@ -1,9 +1,14 @@
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { DebitForm } from "@/components/debits/debit-form";
+import type { Debtor } from "@/app/generated/prisma";
 
-export function DebitDialog() {
+interface DebitDialogProps {
+    debtors?: Debtor[];
+}
+
+export function DebitDialog({debtors = []} :DebitDialogProps) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -13,7 +18,7 @@ export function DebitDialog() {
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogTitle className="sr-only">Adicionar Débito</DialogTitle>
-                <DebitForm />
+                <DebitForm debtors={debtors} />
             </DialogContent>
         </Dialog>
     );
