@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { debtorSchema, DebtorSchema } from "@/core/validators/debtor.schema";
 import { createDebtorAction, editDebtorAction } from "@/actions/debtor/debtor.action";
-import { Debtor } from "@/app/generated/prisma";
+import { Debtor } from "@prisma/client";
 
 export function DebtorForm({ debtor }: { debtor?: Debtor }) {
 
@@ -22,7 +22,7 @@ export function DebtorForm({ debtor }: { debtor?: Debtor }) {
 
     const onSubmit = async (data: DebtorSchema) => {
         const result = debtor ? await editDebtorAction(debtor.id, data) : await createDebtorAction(data);
-        
+
         if (!result.success && result.errors) {
             Object.entries(result.errors).forEach(([field, messages]) => {
                 if (messages && messages.length > 0) {

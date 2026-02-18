@@ -1,6 +1,6 @@
 "use client";
 
-import { Debtor } from "@/app/generated/prisma";
+import { Debtor } from "@prisma/client";
 import { deleteDebtorAction } from "@/actions/debtor/debtor.action";
 import { User, Mail, Phone, Trash } from "lucide-react";
 import { DebtorDialog } from "@/components/debtor/debtor-dialog";

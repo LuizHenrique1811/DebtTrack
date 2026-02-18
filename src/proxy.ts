@@ -1,11 +1,17 @@
-import { auth } from "@/auth";
-import { NextResponse, NextRequest } from "next/server";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
+import { NextResponse } from "next/server";
 
-export async function proxy(req: NextRequest) {
+// Inicializa a autenticação usando APENAS o arquivo leve
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
     const { nextUrl } = req;
-    const session = await auth();
+    
+    // O NextAuth injeta a sessão no 'req.auth' automaticamente
+    const isLoggedIn = !!req.auth;
 
-    if (!session) {
+    if (!isLoggedIn) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
@@ -14,8 +20,8 @@ export async function proxy(req: NextRequest) {
     }
 
     return NextResponse.next();
-    }
+});
 
-    export const config = {
+export const config = {
     matcher: ["/", "/dashboard/:path*"],
 };

@@ -6,7 +6,6 @@
 
 generator client {
     provider = "prisma-client-js"
-    output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -31,7 +30,6 @@ model User {
 
     // App
     debtors           Debtor[]
-    financialAccounts FinancialAccount[]
 }
 
 model Account {
@@ -71,7 +69,6 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-// Auth.js WebAuthn/Passkeys (opcional; necessário para o adapter não acusar erro de tipo)
 model Authenticator {
     credentialID         String  @unique
     userId               String
@@ -104,17 +101,13 @@ model Debit {
     description    String
     totalAmount    Decimal     @db.Decimal(10, 2)
     installmentQty Int // Quantidade de parcelas
-    startDate      DateTime
+    startMonth     Int // mês de vencimento
     dueDay         Int // dia do mês para vencimento
     status         DebitStatus @default(ACTIVE)
 
     // Relacionamento com Debtor
     debtorId String
     debtor   Debtor @relation(fields: [debtorId], references: [id])
-
-    // Relação com Conta
-    accountId String
-    account   FinancialAccount @relation(fields: [accountId], references: [id])
 
     // Relação com Parcelas (Installments)
     installments Installment[]
@@ -130,11 +123,12 @@ enum DebitStatus {
 }
 
 model Installment {
-    id       String            @id @default(uuid())
-    amount   Decimal           @db.Decimal(10, 2)
-    dueDate  DateTime
-    paidDate DateTime?
-    status   InstallmentStatus @default(PENDING)
+    id                String            @id @default(uuid())
+    amount            Decimal           @db.Decimal(10, 2)
+    dueDate           DateTime
+    paidDate          DateTime?
+    installmentNumber Int
+    status            InstallmentStatus @default(PENDING)
 
     // Relação com Pagamentos
     payments Payment[]
@@ -158,18 +152,4 @@ model Payment {
 
     installmentId String
     installment   Installment @relation(fields: [installmentId], references: [id])
-}
-
-model FinancialAccount {
-    id        String   @id @default(uuid())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    // Relação com Usuário
-    userId String
-    user   User   @relation(fields: [userId], references: [id])
-
-    // Relação com Débitos
-    debts Debit[]
 }

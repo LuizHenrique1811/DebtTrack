@@ -1,6 +1,6 @@
 "use client";
 
-import { Debit } from "@/app/generated/prisma";
+import { Debit } from "@prisma/client";
 import { deleteDebtorAction } from "@/actions/debtor/debtor.action";
 import { User, DollarSign } from "lucide-react";
 import { DebtorDialog } from "@/components/debtor/debtor-dialog";

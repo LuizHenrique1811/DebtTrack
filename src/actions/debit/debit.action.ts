@@ -36,8 +36,6 @@ export async function createDebitAction(data: DebitSchema) {
     }
 
     const validatedData = debitSchema.safeParse(data);
-    // console.log(validatedData)
-    // return
     if (!validatedData.success) {
         return {
             errors: validatedData.error.flatten().fieldErrors,
