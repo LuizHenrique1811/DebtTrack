@@ -1,7 +1,7 @@
 "use client";
 
 import { Select, SelectOption } from "@/components/ui/select";
-import type { Debtor } from "@/app/generated/prisma";
+import { Debtor } from "@prisma/client";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 interface DebtorSelectProps {

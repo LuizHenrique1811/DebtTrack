@@ -1,13 +1,16 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { formatCurrency, parseCurrency } from "@/lib/utils"
+import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { debitSchema, DebitSchema } from "@/core/validators/debit.schema";
-import { Debit, Debtor } from "@/app/generated/prisma";
+import { Debit, Debtor } from "@prisma/client";
 import { createDebitAction } from "@/actions/debit/debit.action";
 import { DebtorSelect } from "@/components/debtor/debtor-select"
 import { Button } from "@/components/ui/button";
+import { MonthSelect } from "@/components/ui/month-select";
+import { DaySelect } from "@/components/ui/day-select";
 
 export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: Debtor[] }) {
 
@@ -16,12 +19,26 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
         handleSubmit,
         setError,
         reset,
+        watch,
+        control,
         formState: { errors, isSubmitting },
     } = useForm<DebitSchema>({
         resolver: zodResolver(debitSchema),
     });
 
+    const watchedAmount = watch("totalAmount");
+    const watchedQty = watch("installmentQty");
+
+    const installmentPreview = (() => {
+        const amount = Number(watchedAmount) || 0;
+        const qty = Number(watchedQty) || 1;
+
+        if (qty <= 0) return 0;
+        return amount / qty;
+    })();
+
     const onSubmit = async (data: DebitSchema) => {
+        console.log("executou")
         const result = await createDebitAction(data);
         if (!result.success && result.errors) {
             Object.entries(result.errors).forEach(([field, messages]) => {
@@ -65,21 +82,37 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Valores e parcelas
                 </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                    <Input
-                        label="Valor total"
-                        type="text"
-                        placeholder="0,00"
-                        registration={register("totalAmount")}
-                        error={errors.totalAmount?.message}
+                <div className="grid gap-4 sm:grid-cols-3">
+                    <Controller
+                        name="totalAmount"
+                        control={control}
+                        render={({ field }) => (
+                            <Input
+                                label="Valor total"
+                                type="text"
+                                placeholder="0,00"
+                                name={field.name}
+                                value={formatCurrency(field.value)}
+                                onChange={(e) => field.onChange(parseCurrency(e.target.value))}
+                                error={errors.totalAmount?.message}
+                            />
+                        )}
                     />
                     <Input
                         label="Quantidade de parcelas"
                         type="number"
                         min="01"
-                        placeholder="Ex.: 12"
+                        defaultValue={1}
                         registration={register("installmentQty")}
                         error={errors.installmentQty?.message}
+                    />
+                    <Input
+                        label="Valor da Parcela (Prévia)"
+                        type="text"
+                        value={formatCurrency(installmentPreview)}
+                        readOnly
+                        disabled
+                        className="cursor-not-allowed bg-zinc-100 dark:bg-zinc-800 text-zinc-500"
                     />
                 </div>
             </section>
@@ -89,19 +122,13 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                     Datas
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2">
-                    <Input
+                    <MonthSelect
                         label="Mês de início"
-                        type="month"
-                        placeholder="Data de início"
-                        registration={register("startDate")}
-                        error={errors.startDate?.message}
+                        registration={register("startMonth")}
+                        error={errors.startMonth?.message}
                     />
-                    <Input
+                    <DaySelect
                         label="Dia de vencimento"
-                        type="number"
-                        min="01"
-                        max="31"
-                        placeholder="Dia do mês"
                         registration={register("dueDay")}
                         error={errors.dueDay?.message}
                     />
