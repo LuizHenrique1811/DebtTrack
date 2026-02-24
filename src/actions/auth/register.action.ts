@@ -1,12 +1,9 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { UserAlreadyExistsError } from "@/core/errors/auth.errors";
-import { createUser } from "@/core/services/auth.service";
-import {
-  registerSchema,
-  RegisterSchema,
-} from "@/core/validators/register.schema";
+import { UserAlreadyExistsError } from "@/core/auth/auth.errors";
+import { createUser } from "@/core/auth/auth.service";
+import { registerSchema, RegisterSchema } from "@/core/auth/register.schema";
 import { redirect } from "next/navigation";
 
 export async function registerAction(formData: RegisterSchema) {
@@ -19,7 +16,7 @@ export async function registerAction(formData: RegisterSchema) {
   }
 
   const { email, password } = validatedData.data;
-  
+
   try {
     await createUser(validatedData.data);
     await signIn("credentials", {

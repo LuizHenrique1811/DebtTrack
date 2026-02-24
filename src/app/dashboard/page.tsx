@@ -1,9 +1,9 @@
-import { getCurrentUser } from "@/core/services/current-user.service";
+import { getCurrentUser } from "@/core/auth/current-user.service";
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser();
+    const user = await getCurrentUser();
 
-  return (
-    <h2>Bem-vindo {user?.name}</h2>
-    ); 
+    return (
+        <h2>Bem-vindo {user?.name}</h2>
+    );
 }       

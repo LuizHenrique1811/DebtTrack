@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
+import { LoginSchema, loginSchema } from "@/core/auth/login.schema";
 import { redirect } from "next/navigation";
 
 export async function loginAction(data: LoginSchema) {
@@ -21,16 +21,15 @@ export async function loginAction(data: LoginSchema) {
     });
   } catch (error) {
     if (
-        error instanceof Error &&
-        error.name === "CredentialsSignin" &&
-        "type" in error
+      error instanceof Error &&
+      error.name === "CredentialsSignin" &&
+      "type" in error
     ) {
-        
-        console.log("Dentro do if")
-        switch (error.type) {
-            case "CredentialsSignin":
-            console.log("Dentro do switch")
-            console.error("Erro ao fazer login:", error);
+      console.log("Dentro do if");
+      switch (error.type) {
+        case "CredentialsSignin":
+          console.log("Dentro do switch");
+          console.error("Erro ao fazer login:", error);
           return {
             success: false,
             errors: {

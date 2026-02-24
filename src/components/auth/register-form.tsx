@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerAction } from "@/actions/auth/register.action";
-import { type RegisterSchema, registerSchema } from "@/core/validators/register.schema";
+import { type RegisterSchema, registerSchema } from "@/core/auth/register.schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 

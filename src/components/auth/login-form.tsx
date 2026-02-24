@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { loginAction } from "@/actions/auth/login.action";
-import { LoginSchema, loginSchema } from "@/core/validators/login.schema";
+import { LoginSchema, loginSchema } from "@/core/auth/login.schema";
 
 
 export function LoginForm() {

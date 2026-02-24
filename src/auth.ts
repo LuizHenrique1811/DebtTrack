@@ -3,12 +3,12 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import { prisma } from "@/lib/prisma";
-import { AuthService } from "@/core/services/auth.service";
+import { AuthService } from "@/core/auth/auth.service";
 import { authConfig } from "./auth.config";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
-  
+
   adapter: PrismaAdapter(prisma),
 
   providers: [
