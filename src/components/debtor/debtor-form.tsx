@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { debtorSchema, DebtorSchema } from "@/core/validators/debtor.schema";
+import { debtorSchema, DebtorSchema } from "@/core/debit/debtor.schema";
 import { createDebtorAction, editDebtorAction } from "@/actions/debtor/debtor.action";
 import { Debtor } from "@prisma/client";
 

@@ -1,5 +1,5 @@
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
-import { getCurrentUser } from "@/core/services/current-user.service";
+import { getCurrentUser } from "@/core/auth/current-user.service";
 
 export default async function DashboardLayout({
     children,

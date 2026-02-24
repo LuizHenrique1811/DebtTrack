@@ -4,7 +4,7 @@ import { formatCurrency, parseCurrency } from "@/lib/utils"
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { debitSchema, DebitSchema } from "@/core/validators/debit.schema";
+import { debitSchema, DebitSchema } from "@/core/debit/debit.schema";
 import { Debit, Debtor } from "@prisma/client";
 import { createDebitAction } from "@/actions/debit/debit.action";
 import { DebtorSelect } from "@/components/debtor/debtor-select"

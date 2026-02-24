@@ -1,97 +1,99 @@
 "use server";
 
-import { getCurrentUser } from "@/core/services/current-user.service";
-import { createDebtor, getDebtors, updateDebtor, deleteDebtor } from "@/core/services/debtor.service";
-import { debtorSchema, DebtorSchema } from "@/core/validators/debtor.schema";
+import { getCurrentUser } from "@/core/auth/current-user.service";
+import {
+  createDebtor,
+  getDebtors,
+  updateDebtor,
+  deleteDebtor,
+} from "@/core/debtor/debtor.service";
+import { debtorSchema, DebtorSchema } from "@/core/debit/debtor.schema";
 import { revalidatePath } from "next/cache";
 
 export async function listDebtorAction() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return {
+      error: "Usuário não encontrado",
+    };
+  }
 
-    const user = await getCurrentUser();
-    if (!user) {
-        return {
-            error: "Usuário não encontrado",
-        };
-    }
-
-    try {
-        const debtors = await getDebtors(user.id);
-        return {
-            success: true,
-            debtors,
-        };
-    } catch (error) {
-        return {
-            error: "Erro ao buscar devedores",
-        };
-    }
+  try {
+    const debtors = await getDebtors(user.id);
+    return {
+      success: true,
+      debtors,
+    };
+  } catch (error) {
+    return {
+      error: "Erro ao buscar devedores",
+    };
+  }
 }
 
 export async function createDebtorAction(data: DebtorSchema) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return {
+      error: "Usuário não encontrado",
+    };
+  }
 
-    const user = await getCurrentUser();
-    if (!user) {
-        return {
-            error: "Usuário não encontrado",
-        };
-    }
+  const validatedData = debtorSchema.safeParse(data);
+  if (!validatedData.success) {
+    return {
+      errors: validatedData.error.flatten().fieldErrors,
+    };
+  }
 
-    const validatedData = debtorSchema.safeParse(data);
-    if (!validatedData.success) {
-        return {
-            errors: validatedData.error.flatten().fieldErrors,
-        };
-    }
+  try {
+    const debtor = await createDebtor(user.id, data);
 
-    try {
-        const debtor = await createDebtor(user.id, data);
+    revalidatePath("/dashboard/debtors");
 
-        revalidatePath("/dashboard/debtors");
-        
-        return {
-            success: true,
-            debtor,
-        };
-    } catch (error) {
-        return {
-            error: "Erro ao criar devedor",
-        };
-    }
+    return {
+      success: true,
+      debtor,
+    };
+  } catch (error) {
+    return {
+      error: "Erro ao criar devedor",
+    };
+  }
 }
 
 export async function editDebtorAction(id: string, data: DebtorSchema) {
+  const validatedData = debtorSchema.safeParse(data);
+  if (!validatedData.success) {
+    return {
+      errors: validatedData.error.flatten().fieldErrors,
+    };
+  }
 
-    const validatedData = debtorSchema.safeParse(data);
-    if (!validatedData.success) {
-        return {
-            errors: validatedData.error.flatten().fieldErrors,
-        };
-    }
-
-    try {
-        const debtor = await updateDebtor(id, data);
-        revalidatePath("/dashboard/debtors");
-        return {
-            success: true,
-            debtor,
-        };
-    } catch (error) {
-        return {
-            error: "Erro ao editar devedor",
-        };
-    }
+  try {
+    const debtor = await updateDebtor(id, data);
+    revalidatePath("/dashboard/debtors");
+    return {
+      success: true,
+      debtor,
+    };
+  } catch (error) {
+    return {
+      error: "Erro ao editar devedor",
+    };
+  }
 }
 
 export async function deleteDebtorAction(id: string) {
-    try {
-        await deleteDebtor(id);
-        revalidatePath("/dashboard/debtors");
-        return {
-            success: true,
-        };
-    } catch (error) {
-        return {
-            error: "Erro ao excluir devedor",
-        };
-    }
+  try {
+    await deleteDebtor(id);
+    revalidatePath("/dashboard/debtors");
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      error: "Erro ao excluir devedor",
+    };
+  }
 }

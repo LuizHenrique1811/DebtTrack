@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { InstallmentStatus } from "@prisma/client";
-import { DebitSchema } from "@/core/validators/debit.schema";
+import { generateInstallments } from "@/core/debit/installment-calculator";
+import { DebitSchema } from "@/core/debit/debit.schema";
 
 export async function getDebits(userId: string) {
   const debits = await prisma.debit.findMany({
@@ -8,6 +8,9 @@ export async function getDebits(userId: string) {
       debtor: {
         userId,
       },
+    },
+    include: {
+      debtor: true,
     },
   });
   return debits;
@@ -22,7 +25,6 @@ export async function createDebit(userId: string, data: DebitSchema) {
   if (!debtorOwner) throw new Error("Devedor não encontrado");
 
   return await prisma.$transaction(async (tx) => {
-
     const debit = await tx.debit.create({
       data: {
         description: data.description,
@@ -48,27 +50,16 @@ export async function createDebit(userId: string, data: DebitSchema) {
 
     const currentYear = new Date().getFullYear();
 
-    const installmentsData = Array.from({ length: qty }, (_, index) => {
-        const monthIndex = (data.startMonth - 1) + index;
-        const dueDate = new Date(currentYear, monthIndex, data.dueDay);
-
-        // Adiciona a diferença apenas na última parcela
-        const isLastInstallment = index === qty - 1;
-        const finalAmount = isLastInstallment 
-            ? baseInstallmentValue + remainder 
-            : baseInstallmentValue;
-
-        return {
-            debitId: debit.id,
-            amount: finalAmount,
-            installmentNumber: index + 1,
-            dueDate: dueDate,
-            status: InstallmentStatus.PENDING
-        };
+    const installmentsData = generateInstallments({
+        totalAmount: Number(data.totalAmount),
+        installmentQty: data.installmentQty,
+        startMonth: data.startMonth,
+        dueDay: data.dueDay,
+        debitId: debit.id,
     });
 
     await tx.installment.createMany({
-      data: installmentsData,
+        data: installmentsData,
     });
 
     return { success: true, debitId: debit.id };
