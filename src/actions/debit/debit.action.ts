@@ -48,10 +48,11 @@ export async function createDebitAction(data: DebitSchema) {
   }
 
   try {
-    await createDebit(user.id, data);
+    const debit = await createDebit(user.id, data);
     revalidatePath("/dashboard/debits");
     return {
       success: true,
+      debitObj:debit
     };
   } catch (error) {
     return {

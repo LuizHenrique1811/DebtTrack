@@ -18,4 +18,12 @@ export function parseCurrency(raw: string): number {
     const digits = raw.replace(/\D/g, "");
     const cents = Number(digits || "0");
     return cents / 100;
-  }
+}
+
+export function formatDatePt(date: Date) {
+    return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+    }).format(new Date(date));
+}
