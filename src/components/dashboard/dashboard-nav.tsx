@@ -9,12 +9,14 @@ import {
     Receipt,
     BarChart3,
     LogOut,
+    CreditCard,
 } from "lucide-react";
 
 const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/debtors", label: "Devedores", icon: Users },
     { href: "/dashboard/debits", label: "Débitos", icon: Receipt },
+    { href: "/dashboard/installments", label: "Parcelas", icon: CreditCard },
     { href: "/dashboard/reports", label: "Relatórios", icon: BarChart3 },
 ];
 
