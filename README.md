@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DebtTrack (Financial Tracker)
 
-## Getting Started
+> **Status:** Work In Progress — fase de arquitetura core, modelagem de dados e fluxos principais de passivos.
 
-First, run the development server:
+Aplicação para gestão, rastreamento e conciliação de passivos financeiros. O foco arquitetônico é garantir a integridade dos dados transacionados e aplicar validações estritas de estado no frontend.
+
+## Stack tecnológica
+
+- **Frontend:** React 19 / Next.js 16 (App Router, TypeScript)
+- **Dados:** PostgreSQL + Prisma 7 (`@prisma/adapter-pg`)
+- **Autenticação:** Auth.js (NextAuth v5) — credenciais + JWT
+- **Validação:** Zod + React Hook Form
+- **Estilo:** Tailwind CSS 4
+- **Qualidade:** ESLint (`pnpm lint`); Jest configurado localmente (pipeline CI ainda não implementado)
+
+## Pré-requisitos
+
+- [Node.js](https://nodejs.org/) 20 ou superior
+- [pnpm](https://pnpm.io/)
+- [PostgreSQL](https://www.postgresql.org/) acessível localmente ou em container
+
+## Como rodar o projeto
+
+### 1. Instalar dependências
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configurar variáveis de ambiente
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copie o arquivo de exemplo e preencha os valores:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env
+```
 
-## Learn More
+| Variável       | Obrigatória        | Descrição                                                                               |
+| -------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| `DATABASE_URL` | Sim                | URL de conexão PostgreSQL (`postgresql://user:pass@localhost:5432/debttrack`)           |
+| `AUTH_SECRET`  | Sim                | Segredo do Auth.js ([como gerar](https://authjs.dev/getting-started/deployment#auth_secret)) |
+| `AUTH_URL`     | Recomendada em dev | URL base da aplicação (`http://localhost:3000`)                                         |
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Preparar o banco de dados
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm exec prisma generate
+pnpm exec prisma migrate deploy
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Schema:** `src/prisma/schema.prisma`
+- **Migrações:** `prisma/migrations/` (configurado em `prisma.config.ts`)
 
-## Deploy on Vercel
+Durante o desenvolvimento, ao alterar o schema:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm exec prisma migrate dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Iniciar o servidor de desenvolvimento
+
+```bash
+pnpm dev
+```
+
+Abra [http://localhost:3000](http://localhost:3000). A landing oferece acesso a `/login` e `/register`. Após autenticação, use as rotas em `/dashboard` (devedores, débitos e parcelas).
+
+### 5. Build de produção (opcional)
+
+```bash
+pnpm build
+pnpm start
+```
+
+### 6. Executar testes
+
+```bash
+pnpm exec jest
+```
+
+## Scripts disponíveis
+
+| Comando      | Descrição                   |
+| ------------ | --------------------------- |
+| `pnpm dev`   | Servidor de desenvolvimento |
+| `pnpm build` | Build de produção           |
+| `pnpm start` | Servidor após o build       |
+| `pnpm lint`  | Verificação com ESLint      |
+
+## Roadmap de engenharia
+
+### Concluído
+
+- [x] Estruturação do repositório e tipagem base com TypeScript
+- [x] Modelagem de dados (Prisma/PostgreSQL) e validação Zod de débitos, devedores e autenticação
+- [x] Autenticação com Auth.js (credenciais + JWT) — ver [ADR 0001](docs/adr/0001-authentication-strategy.md)
+- [x] CRUD de devedores e débitos; geração automática de parcelas (`installment-calculator`)
+- [x] Dashboard com páginas server-side (devedores, débitos, parcelas)
+- [x] Testes iniciais com Jest (calculadora de parcelas e action de criação de débito)
+
+### Em andamento / pendente
+
+- [ ] Painéis de consolidação financeira (visão agregada; dashboard ainda minimalista)
+- [ ] Fluxo de conciliação e registro de pagamentos (modelo `Payment` sem implementação em `src/`)
+- [ ] Pipeline CI no GitHub Actions (lint + testes automatizados)
+- [ ] Ampliar cobertura de testes nos módulos de conciliação e regras de estado de parcelas
+- [ ] Script `test` no `package.json` e documentação de contribuição
+
+## Referências
+
+- [Documentação Next.js](https://nextjs.org/docs)
+- [Prisma](https://www.prisma.io/docs)
+- [Auth.js](https://authjs.dev)
