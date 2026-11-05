@@ -31,6 +31,10 @@ export function formatDatePt(date: Date) {
     }).format(new Date(date));
 }
 
+export function formatDateShortPt(date: Date) {
+    return new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(new Date(date));
+}
+
 export function formatCompactCurrency(value: number) {
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",

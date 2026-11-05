@@ -89,9 +89,9 @@ export function PaymentHistoryDialog({ payments }: { payments: Payment[] }) {
             <DialogTrigger asChild>
                 <button
                     type="button"
-                    className="mt-2 text-sm font-medium text-zinc-600 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                    className="whitespace-nowrap text-sm font-medium text-zinc-600 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
                 >
-                    Ver pagamentos ({payments.length})
+                    Pagamentos ({payments.length})
                 </button>
             </DialogTrigger>
             <DialogContent className="max-w-md">

@@ -1,5 +1,5 @@
 import { listInstallmentAction } from "@/actions/installment/installment.action";
-import { InstallmentCard } from "@/components/installment/installment-card";
+import { InstallmentList } from "@/components/installment/installment-list";
 
 export default async function InstallmentsPage() {
 
@@ -23,11 +23,7 @@ export default async function InstallmentsPage() {
                     </p>
                 </div>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {installments.map((installment) => (
-                        <InstallmentCard key={installment.id} installment={installment} />
-                    ))}
-                </div>
+                <InstallmentList installments={installments} />
             )}
         </main>
     );

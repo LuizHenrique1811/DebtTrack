@@ -16,7 +16,7 @@ export function PaymentDialog({ installmentId, remainingAmount }: PaymentDialogP
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button type="button" variant="green" className="mt-4 text-sm">
+                <Button type="button" variant="green" className="w-auto whitespace-nowrap px-3 py-1.5 text-sm">
                     Registrar pagamento
                 </Button>
             </DialogTrigger>

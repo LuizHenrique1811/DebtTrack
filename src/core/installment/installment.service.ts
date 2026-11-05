@@ -12,7 +12,13 @@ export async function getInstallments(userId: string) {
             },
         },
         include: {
-            debit: true,
+            debit: {
+                select: {
+                    description: true,
+                    installmentQty: true,
+                    debtor: { select: { id: true, name: true } },
+                },
+            },
             payments: {
                 select: { id: true, amount: true, paymentDate: true },
                 orderBy: { paymentDate: "desc" },
@@ -26,7 +32,11 @@ export async function getInstallments(userId: string) {
 
         return {
             id: installment.id,
+            debtorId: installment.debit.debtor.id,
+            debtorName: installment.debit.debtor.name,
             description: installment.debit.description,
+            installmentNumber: installment.installmentNumber,
+            installmentQty: installment.debit.installmentQty,
             amount: installment.amount.toNumber(),
             paidAmount: paidAmount.toNumber(),
             remainingAmount: installment.amount.minus(paidAmount).toNumber(),
