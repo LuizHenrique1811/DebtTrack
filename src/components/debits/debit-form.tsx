@@ -38,7 +38,6 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
     })();
 
     const onSubmit = async (data: DebitSchema) => {
-        console.log("executou")
         const result = await createDebitAction(data);
         if (!result.success && result.errors) {
             Object.entries(result.errors).forEach(([field, messages]) => {
@@ -49,6 +48,9 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                     });
                 }
             });
+        }
+        if (result.error) {
+            setError("root.server", { type: "server", message: result.error });
         }
         if (result.success) {
             reset();
@@ -135,7 +137,12 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                 </div>
             </section>
 
-            <div className="mt-2 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+            <div className="mt-2 flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+                {errors.root?.server?.message && (
+                    <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                        {errors.root.server.message}
+                    </p>
+                )}
                 <Button loadingText="Adicionando..." isLoading={isSubmitting} variant="green">
                     {debit ? "Atualizar Débito" : "Adicionar Débito"}
                 </Button>
