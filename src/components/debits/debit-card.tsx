@@ -1,14 +1,13 @@
 "use client";
 
-import { Debit, Debtor } from "@prisma/client";
-import { CalendarDays, CreditCard, User, MoreVertical, ArrowDownLeft } from "lucide-react";
+import type { Debtor } from "@prisma/client";
+import { CalendarDays, CreditCard, User, ArrowDownLeft } from "lucide-react";
+import { DebitDeleteDialog } from "@/components/debits/debit-delete-dialog";
+import { DebitDialog } from "@/components/debits/debit-dialog";
+import type { DebitView } from "@/core/debit/debit.service";
+import { formatCurrency } from "@/lib/utils";
 
-type ParsedDebit = Omit<Debit, "totalAmount"> & {
-    totalAmount: number;
-    debtor?: Pick<Debtor, "name">;
-};
-
-export function DebitCard({ debit }: { debit: ParsedDebit }) {
+export function DebitCard({ debit, debtors }: { debit: DebitView; debtors: Debtor[] }) {
     const installmentPreview = debit.totalAmount / debit.installmentQty;
 
     const statusConfig = {
@@ -46,9 +45,10 @@ export function DebitCard({ debit }: { debit: ParsedDebit }) {
                     </div>
                 </div>
 
-                <button className="shrink-0 rounded-md p-1 text-zinc-400 opacity-0 transition-all hover:bg-zinc-100 hover:text-zinc-900 focus:opacity-100 group-hover:opacity-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-50">
-                    <MoreVertical className="h-5 w-5" />
-                </button>
+                <div className="flex shrink-0 items-center gap-1">
+                    <DebitDialog debit={debit} debtors={debtors} />
+                    <DebitDeleteDialog debit={debit} />
+                </div>
             </div>
 
             <div className="my-5 flex items-end justify-between">
@@ -58,7 +58,7 @@ export function DebitCard({ debit }: { debit: ParsedDebit }) {
                         {debit.status === "ACTIVE" && <ArrowDownLeft className="h-4 w-4 text-amber-500" />}
                     </p>
                     <p className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                        R$ {debit.totalAmount.toFixed(2)}
+                        {formatCurrency(debit.totalAmount)}
                     </p>
                 </div>
                 
@@ -71,7 +71,7 @@ export function DebitCard({ debit }: { debit: ParsedDebit }) {
                 <div className="flex items-center gap-1.5" title={`Dividido em ${debit.installmentQty} parcelas`}>
                     <CreditCard className="h-4 w-4 text-zinc-400" />
                     <span className="truncate">
-                        {debit.installmentQty}x <span className="hidden sm:inline">de R$ {installmentPreview.toFixed(2)}</span>
+                        {debit.installmentQty}x <span className="hidden sm:inline">de {formatCurrency(installmentPreview)}</span>
                     </span>
                 </div>
                 

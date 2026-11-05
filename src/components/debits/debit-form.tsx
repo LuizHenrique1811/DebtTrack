@@ -5,14 +5,22 @@ import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { debitSchema, DebitSchema } from "@/core/debit/debit.schema";
-import { Debit, Debtor } from "@prisma/client";
-import { createDebitAction } from "@/actions/debit/debit.action";
+import type { DebitView } from "@/core/debit/debit.service";
+import type { Debtor } from "@prisma/client";
+import { createDebitAction, updateDebitAction } from "@/actions/debit/debit.action";
 import { DebtorSelect } from "@/components/debtor/debtor-select"
 import { Button } from "@/components/ui/button";
 import { MonthSelect } from "@/components/ui/month-select";
 import { DaySelect } from "@/components/ui/day-select";
 
-export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: Debtor[] }) {
+interface DebitFormProps {
+    debit?: DebitView;
+    debtors?: Debtor[];
+    onSuccess?: () => void;
+}
+
+export function DebitForm({ debit, debtors = [], onSuccess }: DebitFormProps) {
+    const hasPayments = (debit?.paymentCount ?? 0) > 0;
 
     const {
         register,
@@ -24,6 +32,16 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
         formState: { errors, isSubmitting },
     } = useForm<DebitSchema>({
         resolver: zodResolver(debitSchema),
+        defaultValues: debit
+            ? {
+                  debtorId: debit.debtorId,
+                  description: debit.description,
+                  totalAmount: debit.totalAmount,
+                  installmentQty: debit.installmentQty,
+                  startMonth: debit.startMonth,
+                  dueDay: debit.dueDay,
+              }
+            : { installmentQty: 1 },
     });
 
     const watchedAmount = watch("totalAmount");
@@ -38,7 +56,10 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
     })();
 
     const onSubmit = async (data: DebitSchema) => {
-        const result = await createDebitAction(data);
+        const result = debit
+            ? await updateDebitAction(debit.id, data)
+            : await createDebitAction(data);
+
         if (!result.success && result.errors) {
             Object.entries(result.errors).forEach(([field, messages]) => {
                 if (messages && messages.length > 0) {
@@ -53,7 +74,8 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
             setError("root.server", { type: "server", message: result.error });
         }
         if (result.success) {
-            reset();
+            if (!debit) reset();
+            onSuccess?.();
         }
     }
 
@@ -80,6 +102,13 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                 />
             </section>
 
+            {/* fieldset desabilitado mantém os valores no formulário, ao contrário de cada campo desabilitado */}
+            <fieldset disabled={hasPayments} className="flex flex-col gap-4 disabled:opacity-60 sm:gap-3">
+            {hasPayments ? (
+                <p className="rounded-lg bg-amber-100 p-3 text-sm text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">
+                    Este débito tem pagamentos, então valores e datas estão travados. Para alterá-los, desfaça os pagamentos em Parcelas.
+                </p>
+            ) : null}
             <section className="flex flex-col gap-4" aria-label="Valores e parcelas">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Valores e parcelas
@@ -104,7 +133,6 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                         label="Quantidade de parcelas"
                         type="number"
                         min="01"
-                        defaultValue={1}
                         registration={register("installmentQty")}
                         error={errors.installmentQty?.message}
                     />
@@ -136,6 +164,7 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                     />
                 </div>
             </section>
+            </fieldset>
 
             <div className="mt-2 flex flex-col gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-700">
                 {errors.root?.server?.message && (
@@ -143,8 +172,12 @@ export function DebitForm({ debit, debtors = [] }: { debit?: Debit, debtors?: De
                         {errors.root.server.message}
                     </p>
                 )}
-                <Button loadingText="Adicionando..." isLoading={isSubmitting} variant="green">
-                    {debit ? "Atualizar Débito" : "Adicionar Débito"}
+                <Button
+                    loadingText={debit ? "Salvando..." : "Adicionando..."}
+                    isLoading={isSubmitting}
+                    variant="green"
+                >
+                    {debit ? "Salvar alterações" : "Adicionar Débito"}
                 </Button>
             </div>
         </form>
