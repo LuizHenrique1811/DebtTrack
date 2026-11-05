@@ -30,7 +30,6 @@ interface CollectionItem {
     dueDay: number;
     amount: number;
     remaining: Prisma.Decimal;
-    isOverdue: boolean;
 }
 
 function getMonthKeys(todayKey: string) {
@@ -84,7 +83,6 @@ function groupCollection(items: CollectionItem[]) {
             dueDay: item.dueDay,
             amount: item.amount,
             remaining: item.remaining.toNumber(),
-            isOverdue: item.isOverdue,
         })),
     }));
 }
@@ -127,7 +125,6 @@ export function buildReport(installments: ReportInstallment[], now = new Date())
                 dueDay: installment.dueDate.getUTCDate(),
                 amount: installment.amount.toNumber(),
                 remaining,
-                isOverdue,
             });
         }
 

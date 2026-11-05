@@ -264,14 +264,14 @@ describe("buildReport collection", () => {
     expect(collection.debtors[0].installments[0]).toMatchObject({ amount: 100.33, remaining: 60.23 });
   });
 
-  it("should flag installments already overdue this month", () => {
+  it("should keep charging installments whose day already passed this month", () => {
     const collection = collectionOf([
-      installment({ dueDate: "2026-11-05", installmentNumber: 1 }),
-      installment({ dueDate: "2026-11-15", installmentNumber: 2 }),
-      installment({ dueDate: "2026-11-20", installmentNumber: 3 }),
+      installment({ dueDate: "2026-11-05", amount: "40.00" }),
+      installment({ dueDate: "2026-11-20", amount: "60.00", installmentNumber: 2 }),
     ]);
 
-    expect(collection.debtors[0].installments.map((item) => item.isOverdue)).toEqual([true, false, false]);
+    expect(collection.total).toBe(100);
+    expect(collection.debtors[0].installments).toHaveLength(2);
   });
 
   it("should add up each debtor without losing cents", () => {
