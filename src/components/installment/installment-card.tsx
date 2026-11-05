@@ -1,7 +1,9 @@
 "use client";
 
-import { Debit, Installment, InstallmentStatus } from "@prisma/client";
+import type { InstallmentStatus } from "@prisma/client";
 import { Banknote, Calendar } from "lucide-react";
+import { PaymentDialog } from "@/components/payment/payment-dialog";
+import type { InstallmentView } from "@/core/installment/installment.service";
 import { formatCurrency, formatDatePt } from "@/lib/utils";
 
 const statusLabels: Record<InstallmentStatus, string> = {
@@ -23,14 +25,9 @@ const statusClassName: Record<InstallmentStatus, string> = {
         "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
 };
 
-export function InstallmentCard({
-    installment,
-    debit,
-}: {
-    installment: Installment;
-    debit: Debit;
-}) {
-    const { status } = installment;
+export function InstallmentCard({ installment }: { installment: InstallmentView }) {
+    const { status, paidAmount, remainingAmount } = installment;
+    const canReceivePayment = status !== "PAID" && status !== "CANCELLED";
 
     return (
         <article className="group rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900">
@@ -41,7 +38,7 @@ export function InstallmentCard({
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                         <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">
-                            {debit.description}
+                            {installment.description}
                         </h3>
                         <span
                             className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusClassName[status]}`}
@@ -52,6 +49,11 @@ export function InstallmentCard({
                     <p className="mt-1 text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-50">
                         {formatCurrency(installment.amount)}
                     </p>
+                    {paidAmount > 0 && remainingAmount > 0 ? (
+                        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                            Recebido {formatCurrency(paidAmount)} · Falta {formatCurrency(remainingAmount)}
+                        </p>
+                    ) : null}
                     <p className="mt-2 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
                         <Calendar className="h-4 w-4 shrink-0" />
                         <span>
@@ -65,6 +67,9 @@ export function InstallmentCard({
                     ) : null}
                 </div>
             </div>
+            {canReceivePayment ? (
+                <PaymentDialog installmentId={installment.id} remainingAmount={remainingAmount} />
+            ) : null}
         </article>
     );
 }

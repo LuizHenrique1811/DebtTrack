@@ -13,7 +13,6 @@ export async function listInstallmentAction() {
 
     try {
         const installments = await getInstallments(user.id);
-        console.log(installments);
         return {
             success: true,
             installments,

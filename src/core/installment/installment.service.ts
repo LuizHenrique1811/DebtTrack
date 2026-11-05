@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { getEffectiveStatus } from "@/core/installment/installment-status";
+import { sumPayments } from "@/core/payment/payment.service";
 
 export async function getInstallments(userId: string) {
     const installments = await prisma.installment.findMany({
@@ -11,10 +13,28 @@ export async function getInstallments(userId: string) {
         },
         include: {
             debit: true,
+            payments: { select: { amount: true } },
         },
+        orderBy: [{ dueDate: "asc" }, { installmentNumber: "asc" }],
     });
-    return installments;
+
+    return installments.map((installment) => {
+        const paidAmount = sumPayments(installment.payments);
+
+        return {
+            id: installment.id,
+            description: installment.debit.description,
+            amount: installment.amount.toNumber(),
+            paidAmount: paidAmount.toNumber(),
+            remainingAmount: installment.amount.minus(paidAmount).toNumber(),
+            dueDate: installment.dueDate,
+            paidDate: installment.paidDate,
+            status: getEffectiveStatus(installment),
+        };
+    });
 }
+
+export type InstallmentView = Awaited<ReturnType<typeof getInstallments>>[number];
 
 export async function getInstallmentByMonth(userId: string, month: number) {
     const installments = await prisma.installment.findMany({

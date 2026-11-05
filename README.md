@@ -109,13 +109,14 @@ pnpm exec jest
 - [x] CRUD de devedores e débitos; geração automática de parcelas (`installment-calculator`)
 - [x] Dashboard com páginas server-side (devedores, débitos, parcelas)
 - [x] Testes iniciais com Jest (calculadora de parcelas e action de criação de débito)
+- [x] Registro de pagamentos, parciais ou totais, com quitação automática da parcela e do débito
+- [x] Status de atraso calculado na leitura, no fuso de São Paulo
 
 ### Em andamento / pendente
 
 - [ ] Painéis de consolidação financeira (visão agregada; dashboard ainda minimalista)
-- [ ] Fluxo de conciliação e registro de pagamentos (modelo `Payment` sem implementação em `src/`)
+- [ ] Desfazer um pagamento registrado por engano
 - [ ] Pipeline CI no GitHub Actions (lint + testes automatizados)
-- [ ] Ampliar cobertura de testes nos módulos de conciliação e regras de estado de parcelas
 - [ ] Script `test` no `package.json` e documentação de contribuição
 
 ## Referências
