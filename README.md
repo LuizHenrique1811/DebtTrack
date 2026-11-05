@@ -78,14 +78,26 @@ pnpm start
 pnpm exec jest
 ```
 
+## Deploy na Vercel
+
+1. Crie um banco PostgreSQL de produção.
+2. Em **Settings → Environment Variables**, defina `DATABASE_URL` e `AUTH_SECRET`.
+3. Aplique as migrações nesse banco, a partir da sua máquina, antes de cada deploy que altere o schema:
+
+   ```bash
+   DATABASE_URL="<url-de-producao>" pnpm exec prisma migrate deploy
+   ```
+
+4. Faça o deploy. O comando `pnpm build` já executa `prisma generate`.
+
 ## Scripts disponíveis
 
-| Comando      | Descrição                   |
-| ------------ | --------------------------- |
-| `pnpm dev`   | Servidor de desenvolvimento |
-| `pnpm build` | Build de produção           |
-| `pnpm start` | Servidor após o build       |
-| `pnpm lint`  | Verificação com ESLint      |
+| Comando      | Descrição                                 |
+| ------------ | ----------------------------------------- |
+| `pnpm dev`   | Servidor de desenvolvimento               |
+| `pnpm build` | Gera o Prisma Client e faz o build        |
+| `pnpm start` | Servidor após o build                     |
+| `pnpm lint`  | Verificação com ESLint                    |
 
 ## Roadmap de engenharia
 
