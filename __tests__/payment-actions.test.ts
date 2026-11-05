@@ -1,5 +1,5 @@
 import { DebitStatus, InstallmentStatus, Prisma } from "@prisma/client";
-import { registerPaymentAction } from "@/actions/payment/payment.action";
+import { registerPaymentAction, undoPaymentAction } from "@/actions/payment/payment.action";
 import { paymentSchema, PaymentSchema } from "@/core/payment/payment.schema";
 import { getTodayDateKey } from "@/lib/utils";
 import { auth } from "@/auth";
@@ -18,9 +18,12 @@ const mockTx = {
   },
   payment: {
     create: jest.fn(),
+    count: jest.fn(),
+    deleteMany: jest.fn(),
   },
   debit: {
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
 };
 
@@ -199,6 +202,96 @@ describe("registerPaymentAction", () => {
     const result = await registerPaymentAction(payment(100.33));
 
     expect(result.error).toBe("Erro ao registrar pagamento");
+  });
+});
+
+describe("undoPaymentAction", () => {
+  const PAYMENT_ID = "mock-payment-id";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (auth as jest.Mock).mockResolvedValue({ user: { id: MOCK_USER_ID } });
+    mockTx.$queryRaw.mockResolvedValue([{ installmentId: INSTALLMENT_ID }]);
+    mockTx.payment.deleteMany.mockResolvedValue({ count: 1 });
+    mockTx.payment.count.mockResolvedValue(0);
+    mockTx.installment.update.mockResolvedValue({ debitId: DEBIT_ID });
+  });
+
+  it("should require a session", async () => {
+    (auth as jest.Mock).mockResolvedValue(null);
+
+    const result = await undoPaymentAction(PAYMENT_ID);
+
+    expect(result.error).toBe("Usuário não encontrado");
+    expect(mockTx.payment.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it("should not touch a payment from another user", async () => {
+    mockTx.$queryRaw.mockResolvedValue([]);
+
+    const result = await undoPaymentAction(PAYMENT_ID);
+
+    expect(result.error).toBe("Pagamento não encontrado");
+    expect(mockTx.payment.deleteMany).not.toHaveBeenCalled();
+    expect(mockTx.installment.update).not.toHaveBeenCalled();
+  });
+
+  it("should check the owner when locking the installment", async () => {
+    await undoPaymentAction(PAYMENT_ID);
+
+    const [, paymentId, userId] = mockTx.$queryRaw.mock.calls[0];
+
+    expect(paymentId).toBe(PAYMENT_ID);
+    expect(userId).toBe(MOCK_USER_ID);
+  });
+
+  it("should return the installment to pending without other payments", async () => {
+    const result = await undoPaymentAction(PAYMENT_ID);
+
+    expect(result.success).toBe(true);
+    expect(mockTx.payment.deleteMany).toHaveBeenCalledWith({ where: { id: PAYMENT_ID } });
+    expect(mockTx.installment.update).toHaveBeenCalledWith({
+      where: { id: INSTALLMENT_ID },
+      data: { status: InstallmentStatus.PENDING, paidDate: null },
+    });
+  });
+
+  it("should keep the installment partially paid with other payments", async () => {
+    mockTx.payment.count.mockResolvedValue(1);
+
+    await undoPaymentAction(PAYMENT_ID);
+
+    expect(mockTx.installment.update).toHaveBeenCalledWith({
+      where: { id: INSTALLMENT_ID },
+      data: { status: InstallmentStatus.PARTIALLY_PAID, paidDate: null },
+    });
+  });
+
+  it("should only reopen a debit that was closed", async () => {
+    await undoPaymentAction(PAYMENT_ID);
+
+    expect(mockTx.debit.updateMany).toHaveBeenCalledWith({
+      where: { id: DEBIT_ID, status: DebitStatus.PAID },
+      data: { status: DebitStatus.ACTIVE },
+    });
+  });
+
+  it("should stop when the payment was already removed", async () => {
+    mockTx.payment.deleteMany.mockResolvedValue({ count: 0 });
+
+    const result = await undoPaymentAction(PAYMENT_ID);
+
+    expect(result.error).toBe("Pagamento não encontrado");
+    expect(mockTx.installment.update).not.toHaveBeenCalled();
+    expect(mockTx.debit.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("should hide unexpected database errors", async () => {
+    mockTx.$queryRaw.mockRejectedValue(new Error("connection string with secrets"));
+
+    const result = await undoPaymentAction(PAYMENT_ID);
+
+    expect(result.error).toBe("Erro ao desfazer pagamento");
   });
 });
 

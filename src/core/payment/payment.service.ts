@@ -91,3 +91,52 @@ export async function registerPayment(userId: string, data: PaymentSchema) {
         return { paymentId: payment.id, isFullyPaid };
     });
 }
+
+export async function undoPayment(userId: string, paymentId: string) {
+    return await prisma.$transaction(async (tx) => {
+        // Mesma regra do registro: confere o dono e trava a parcela.
+        const owned = await tx.$queryRaw<{ installmentId: string }[]>`
+            SELECT installment."id" AS "installmentId"
+            FROM "Payment" AS payment
+            JOIN "Installment" AS installment ON installment."id" = payment."installmentId"
+            JOIN "Debit" AS debit ON debit."id" = installment."debitId"
+            JOIN "Debtor" AS debtor ON debtor."id" = debit."debtorId"
+            WHERE payment."id" = ${paymentId}
+              AND debtor."userId" = ${userId}
+            FOR UPDATE OF installment
+        `;
+
+        if (owned.length === 0) {
+            throw new PaymentError("Pagamento não encontrado");
+        }
+
+        const { installmentId } = owned[0];
+
+        // Dois cliques simultâneos passam pela consulta acima, mas só um remove.
+        const removed = await tx.payment.deleteMany({ where: { id: paymentId } });
+
+        if (removed.count === 0) {
+            throw new PaymentError("Pagamento não encontrado");
+        }
+
+        const remainingPayments = await tx.payment.count({ where: { installmentId } });
+
+        const installment = await tx.installment.update({
+            where: { id: installmentId },
+            data: {
+                status:
+                    remainingPayments > 0
+                        ? InstallmentStatus.PARTIALLY_PAID
+                        : InstallmentStatus.PENDING,
+                paidDate: null,
+            },
+        });
+
+        await tx.debit.updateMany({
+            where: { id: installment.debitId, status: DebitStatus.PAID },
+            data: { status: DebitStatus.ACTIVE },
+        });
+
+        return { installmentId };
+    });
+}

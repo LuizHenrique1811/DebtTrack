@@ -110,12 +110,12 @@ pnpm exec jest
 - [x] Dashboard com páginas server-side (devedores, débitos, parcelas)
 - [x] Testes iniciais com Jest (calculadora de parcelas e action de criação de débito)
 - [x] Registro de pagamentos, parciais ou totais, com quitação automática da parcela e do débito
+- [x] Histórico de pagamentos por parcela, com opção de desfazer
 - [x] Status de atraso calculado na leitura, no fuso de São Paulo
 
 ### Em andamento / pendente
 
 - [ ] Painéis de consolidação financeira (visão agregada; dashboard ainda minimalista)
-- [ ] Desfazer um pagamento registrado por engano
 - [ ] Pipeline CI no GitHub Actions (lint + testes automatizados)
 - [ ] Script `test` no `package.json` e documentação de contribuição
 

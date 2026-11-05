@@ -3,6 +3,7 @@
 import type { InstallmentStatus } from "@prisma/client";
 import { Banknote, Calendar } from "lucide-react";
 import { PaymentDialog } from "@/components/payment/payment-dialog";
+import { PaymentHistoryDialog } from "@/components/payment/payment-history-dialog";
 import type { InstallmentView } from "@/core/installment/installment.service";
 import { formatCurrency, formatDatePt } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ const statusClassName: Record<InstallmentStatus, string> = {
 };
 
 export function InstallmentCard({ installment }: { installment: InstallmentView }) {
-    const { status, paidAmount, remainingAmount } = installment;
+    const { status, paidAmount, remainingAmount, payments } = installment;
     const canReceivePayment = status !== "PAID" && status !== "CANCELLED";
 
     return (
@@ -65,6 +66,7 @@ export function InstallmentCard({ installment }: { installment: InstallmentView 
                             Paga em {formatDatePt(installment.paidDate)}
                         </p>
                     ) : null}
+                    {payments.length > 0 ? <PaymentHistoryDialog payments={payments} /> : null}
                 </div>
             </div>
             {canReceivePayment ? (

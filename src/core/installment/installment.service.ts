@@ -13,7 +13,10 @@ export async function getInstallments(userId: string) {
         },
         include: {
             debit: true,
-            payments: { select: { amount: true } },
+            payments: {
+                select: { id: true, amount: true, paymentDate: true },
+                orderBy: { paymentDate: "desc" },
+            },
         },
         orderBy: [{ dueDate: "asc" }, { installmentNumber: "asc" }],
     });
@@ -30,6 +33,11 @@ export async function getInstallments(userId: string) {
             dueDate: installment.dueDate,
             paidDate: installment.paidDate,
             status: getEffectiveStatus(installment),
+            payments: installment.payments.map((payment) => ({
+                id: payment.id,
+                amount: payment.amount.toNumber(),
+                paymentDate: payment.paymentDate,
+            })),
         };
     });
 }
