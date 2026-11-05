@@ -112,7 +112,7 @@ pnpm exec jest
 - [x] Registro de pagamentos, parciais ou totais, com quitação automática da parcela e do débito
 - [x] Histórico de pagamentos por parcela, com opção de desfazer
 - [x] Status de atraso calculado na leitura, no fuso de São Paulo
-- [x] Relatórios com resumo financeiro, visão por mês e por devedor
+- [x] Relatórios com resumo financeiro, lista de cobrança do mês, visão mensal e por devedor
 
 ### Em andamento / pendente
 

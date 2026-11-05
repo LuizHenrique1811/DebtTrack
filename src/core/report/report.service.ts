@@ -11,10 +11,18 @@ export async function getReport(userId: string) {
             },
         },
         select: {
+            id: true,
             amount: true,
             dueDate: true,
             status: true,
-            debit: { select: { debtor: { select: { id: true, name: true } } } },
+            installmentNumber: true,
+            debit: {
+                select: {
+                    description: true,
+                    installmentQty: true,
+                    debtor: { select: { id: true, name: true } },
+                },
+            },
             payments: { select: { amount: true, paymentDate: true } },
         },
     });
@@ -22,6 +30,8 @@ export async function getReport(userId: string) {
     return buildReport(
         installments.map(({ debit, ...installment }) => ({
             ...installment,
+            description: debit.description,
+            installmentQty: debit.installmentQty,
             debtorId: debit.debtor.id,
             debtorName: debit.debtor.name,
         })),

@@ -9,14 +9,21 @@ function installment({
   dueDate = "2026-12-10",
   status = InstallmentStatus.PENDING as InstallmentStatus,
   debtor = "ana",
+  description = "Empréstimo",
+  installmentNumber = 1,
+  installmentQty = 3,
   payments = [] as [string, string][],
 } = {}): ReportInstallment {
   return {
+    id: `${debtor}-${dueDate}-${installmentNumber}`,
     amount: new Prisma.Decimal(amount),
     dueDate: new Date(`${dueDate}T00:00:00.000Z`),
     status,
     debtorId: debtor,
     debtorName: debtor.toUpperCase(),
+    description,
+    installmentNumber,
+    installmentQty,
     payments: payments.map(([value, date]) => ({
       amount: new Prisma.Decimal(value),
       paymentDate: new Date(`${date}T00:00:00.000Z`),
@@ -197,5 +204,131 @@ describe("buildReport", () => {
     );
 
     expect(month(report, "2026-12")?.expected).toBe(100);
+  });
+});
+
+describe("buildReport collection", () => {
+  const collectionOf = (installments: ReportInstallment[], now = NOW) =>
+    buildReport(installments, now).collection;
+
+  it("should be empty without installments due this month", () => {
+    const collection = collectionOf([installment({ dueDate: "2026-12-10" })]);
+
+    expect(collection).toEqual({ month: "2026-11", total: 0, debtors: [] });
+  });
+
+  it("should only include installments due in the current month", () => {
+    const collection = collectionOf([
+      installment({ dueDate: "2026-10-31" }),
+      installment({ dueDate: "2026-11-01", amount: "10.00" }),
+      installment({ dueDate: "2026-11-30", amount: "20.00" }),
+      installment({ dueDate: "2026-12-01" }),
+      installment({ dueDate: "2025-11-15" }),
+    ]);
+
+    expect(collection.total).toBe(30);
+    expect(collection.debtors[0].installments.map((item) => item.dueDay)).toEqual([1, 30]);
+  });
+
+  it("should leave out paid installments", () => {
+    const collection = collectionOf([
+      installment({
+        dueDate: "2026-11-20",
+        status: InstallmentStatus.PAID,
+        payments: [["100.00", "2026-11-10"]],
+      }),
+    ]);
+
+    expect(collection.debtors).toEqual([]);
+  });
+
+  it("should leave out cancelled installments", () => {
+    const collection = collectionOf([
+      installment({ dueDate: "2026-11-20", status: InstallmentStatus.CANCELLED }),
+    ]);
+
+    expect(collection.debtors).toEqual([]);
+  });
+
+  it("should charge only what is left of a partial payment", () => {
+    const collection = collectionOf([
+      installment({
+        amount: "100.33",
+        dueDate: "2026-11-20",
+        status: InstallmentStatus.PARTIALLY_PAID,
+        payments: [["40.10", "2026-11-05"]],
+      }),
+    ]);
+
+    expect(collection.total).toBe(60.23);
+    expect(collection.debtors[0].installments[0]).toMatchObject({ amount: 100.33, remaining: 60.23 });
+  });
+
+  it("should flag installments already overdue this month", () => {
+    const collection = collectionOf([
+      installment({ dueDate: "2026-11-05", installmentNumber: 1 }),
+      installment({ dueDate: "2026-11-15", installmentNumber: 2 }),
+      installment({ dueDate: "2026-11-20", installmentNumber: 3 }),
+    ]);
+
+    expect(collection.debtors[0].installments.map((item) => item.isOverdue)).toEqual([true, false, false]);
+  });
+
+  it("should add up each debtor without losing cents", () => {
+    const collection = collectionOf([
+      installment({ debtor: "ana", amount: "0.10", dueDate: "2026-11-10" }),
+      installment({ debtor: "ana", amount: "0.20", dueDate: "2026-11-11", installmentNumber: 2 }),
+      installment({ debtor: "bia", amount: "1.00", dueDate: "2026-11-12" }),
+    ]);
+
+    expect(collection.total).toBe(1.3);
+    expect(collection.debtors.map((debtor) => debtor.total)).toEqual([0.3, 1]);
+  });
+
+  it("should put who pays first at the top", () => {
+    const collection = collectionOf([
+      installment({ debtor: "cida", dueDate: "2026-11-25" }),
+      installment({ debtor: "bia", dueDate: "2026-11-05" }),
+      installment({ debtor: "ana", dueDate: "2026-11-05" }),
+    ]);
+
+    expect(collection.debtors.map((debtor) => debtor.id)).toEqual(["ana", "bia", "cida"]);
+  });
+
+  it("should keep the installment details for the list", () => {
+    const collection = collectionOf([
+      installment({
+        dueDate: "2026-11-28",
+        description: "Compra da moto",
+        installmentNumber: 2,
+        installmentQty: 12,
+      }),
+    ]);
+
+    expect(collection.debtors[0].installments[0]).toMatchObject({
+      description: "Compra da moto",
+      installmentNumber: 2,
+      installmentQty: 12,
+      dueDay: 28,
+    });
+  });
+
+  it("should use the Brazilian month on the last evening of the month", () => {
+    // 22h de 30/11 no Brasil, mas já 01/12 em UTC
+    const collection = collectionOf(
+      [installment({ dueDate: "2026-11-30" }), installment({ dueDate: "2026-12-01" })],
+      new Date("2026-12-01T01:00:00.000Z"),
+    );
+
+    expect(collection.month).toBe("2026-11");
+    expect(collection.debtors[0].installments).toHaveLength(1);
+  });
+
+  it("should show the right day for dates saved at Brazilian midnight", () => {
+    const collection = collectionOf([
+      { ...installment(), dueDate: new Date("2026-11-15T03:00:00.000Z") },
+    ]);
+
+    expect(collection.debtors[0].installments[0].dueDay).toBe(15);
   });
 });

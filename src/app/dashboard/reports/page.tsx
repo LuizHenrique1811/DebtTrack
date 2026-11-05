@@ -2,6 +2,7 @@ import { BarChart3 } from "lucide-react";
 import { getReportAction } from "@/actions/report/report.action";
 import { ReportByDebtor } from "@/components/report/report-by-debtor";
 import { ReportByMonth } from "@/components/report/report-by-month";
+import { ReportCollection } from "@/components/report/report-collection";
 import { ReportSummary } from "@/components/report/report-summary";
 
 export default async function ReportsPage() {
@@ -31,6 +32,7 @@ export default async function ReportsPage() {
             ) : (
                 <>
                     <ReportSummary summary={report.summary} />
+                    <ReportCollection collection={report.collection} />
                     <ReportByMonth months={report.months} />
                     <ReportByDebtor debtors={report.debtors} />
                 </>
