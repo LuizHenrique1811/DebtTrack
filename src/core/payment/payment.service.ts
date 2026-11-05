@@ -1,14 +1,8 @@
 import { DebitStatus, InstallmentStatus, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { sumPayments } from "@/core/payment/payment-calculator";
 import { PaymentError } from "@/core/payment/payment.errors";
 import { PaymentSchema } from "@/core/payment/payment.schema";
-
-export function sumPayments(payments: { amount: Prisma.Decimal }[]) {
-    return payments.reduce(
-        (total, payment) => total.plus(payment.amount),
-        new Prisma.Decimal(0),
-    );
-}
 
 export async function registerPayment(userId: string, data: PaymentSchema) {
     const amount = new Prisma.Decimal(data.amount);

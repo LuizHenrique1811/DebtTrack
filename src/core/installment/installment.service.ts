@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getEffectiveStatus } from "@/core/installment/installment-status";
-import { sumPayments } from "@/core/payment/payment.service";
+import { sumPayments } from "@/core/payment/payment-calculator";
 
 export async function getInstallments(userId: string) {
     const installments = await prisma.installment.findMany({

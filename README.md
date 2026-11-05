@@ -112,10 +112,10 @@ pnpm exec jest
 - [x] Registro de pagamentos, parciais ou totais, com quitação automática da parcela e do débito
 - [x] Histórico de pagamentos por parcela, com opção de desfazer
 - [x] Status de atraso calculado na leitura, no fuso de São Paulo
+- [x] Relatórios com resumo financeiro, visão por mês e por devedor
 
 ### Em andamento / pendente
 
-- [ ] Painéis de consolidação financeira (visão agregada; dashboard ainda minimalista)
 - [ ] Pipeline CI no GitHub Actions (lint + testes automatizados)
 - [ ] Script `test` no `package.json` e documentação de contribuição
 

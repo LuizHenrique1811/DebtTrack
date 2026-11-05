@@ -31,6 +31,31 @@ export function formatDatePt(date: Date) {
     }).format(new Date(date));
 }
 
+export function formatCompactCurrency(value: number) {
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        notation: "compact",
+        maximumFractionDigits: 1,
+    }).format(value);
+}
+
+export function formatMonthPt(monthKey: string, format: "short" | "long") {
+    const date = new Date(`${monthKey}-01T00:00:00.000Z`);
+
+    if (format === "long") {
+        return new Intl.DateTimeFormat("pt-BR", {
+            month: "long",
+            year: "numeric",
+            timeZone: "UTC",
+        }).format(date);
+    }
+
+    return new Intl.DateTimeFormat("pt-BR", { month: "short", timeZone: "UTC" })
+        .format(date)
+        .replace(".", "");
+}
+
 // Dia atual no fuso do app, no formato AAAA-MM-DD.
 export function getTodayDateKey(now = new Date()) {
     return new Intl.DateTimeFormat("en-CA", {
