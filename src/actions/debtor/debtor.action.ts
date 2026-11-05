@@ -47,7 +47,7 @@ export async function createDebtorAction(data: DebtorSchema) {
   }
 
   try {
-    const debtor = await createDebtor(user.id, data);
+    const debtor = await createDebtor(user.id, validatedData.data);
 
     revalidatePath("/dashboard/debtors");
 
@@ -63,6 +63,13 @@ export async function createDebtorAction(data: DebtorSchema) {
 }
 
 export async function editDebtorAction(id: string, data: DebtorSchema) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return {
+      error: "Usuário não encontrado",
+    };
+  }
+
   const validatedData = debtorSchema.safeParse(data);
   if (!validatedData.success) {
     return {
@@ -71,7 +78,7 @@ export async function editDebtorAction(id: string, data: DebtorSchema) {
   }
 
   try {
-    const debtor = await updateDebtor(id, data);
+    const debtor = await updateDebtor(user.id, id, validatedData.data);
     revalidatePath("/dashboard/debtors");
     return {
       success: true,
@@ -85,8 +92,15 @@ export async function editDebtorAction(id: string, data: DebtorSchema) {
 }
 
 export async function deleteDebtorAction(id: string) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return {
+      error: "Usuário não encontrado",
+    };
+  }
+
   try {
-    await deleteDebtor(id);
+    await deleteDebtor(user.id, id);
     revalidatePath("/dashboard/debtors");
     return {
       success: true,

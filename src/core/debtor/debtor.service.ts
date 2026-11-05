@@ -13,24 +13,28 @@ export async function getDebtors(userId: string) {
 export async function createDebtor(userId: string, data: DebtorSchema) {
   const debtor = await prisma.debtor.create({
     data: {
-      userId,
       ...data,
+      userId,
     },
   });
   return debtor;
 }
 
-export async function updateDebtor(id: string, data: DebtorSchema) {
+export async function updateDebtor(
+  userId: string,
+  id: string,
+  data: DebtorSchema,
+) {
   const debtor = await prisma.debtor.update({
-    where: { id },
+    where: { id, userId },
     data,
   });
   return debtor;
 }
 
-export async function deleteDebtor(id: string) {
+export async function deleteDebtor(userId: string, id: string) {
   const debtor = await prisma.debtor.delete({
-    where: { id },
+    where: { id, userId },
   });
   return debtor;
 }
