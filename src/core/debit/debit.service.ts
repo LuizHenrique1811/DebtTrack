@@ -36,20 +36,6 @@ export async function createDebit(userId: string, data: DebitSchema) {
       },
     });
 
-    const totalAmount = Number(data.totalAmount);
-    const qty = data.installmentQty;
-
-    // Calcula o valor base (truncado para 2 casas decimais)
-    const baseInstallmentValue = Math.floor((totalAmount / qty) * 100) / 100;
-
-    // Calcula o total gerado com o valor base
-    const totalBase = baseInstallmentValue * qty;
-
-    // Pega o valor que faltou
-    const remainder = Number((totalAmount - totalBase).toFixed(2));
-
-    const currentYear = new Date().getFullYear();
-
     const installmentsData = generateInstallments({
         totalAmount: Number(data.totalAmount),
         installmentQty: data.installmentQty,
