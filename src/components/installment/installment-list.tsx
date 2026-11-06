@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { InstallmentRow, ROW_COLUMNS } from "@/components/installment/installment-row";
+import { ROW_COLUMNS } from "@/components/installment/installment-columns";
+import { InstallmentRow } from "@/components/installment/installment-row";
 import { FilterSearch } from "@/components/ui/filter-search";
 import { FilterSelect } from "@/components/ui/filter-select";
 import {
