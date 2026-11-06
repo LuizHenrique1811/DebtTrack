@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import { ChargeDialog } from "@/components/charge/charge-dialog";
 import type { Report } from "@/core/report/report-calculator";
 import { formatCurrency, formatMonthPt } from "@/lib/utils";
 
@@ -70,6 +71,9 @@ function CollectionDebtor({ debtor, month }: { debtor: Debtor; month: string }) 
                             <InstallmentRow key={installment.id} installment={installment} month={month} />
                         ))}
                     </ul>
+                    <div className="mt-2 flex justify-end">
+                        <ChargeDialog debtorId={debtor.id} debtorName={debtor.name} />
+                    </div>
                 </div>
             </details>
         </li>
