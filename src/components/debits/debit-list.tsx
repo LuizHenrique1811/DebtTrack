@@ -3,6 +3,7 @@
 import type { Debtor } from "@prisma/client";
 import { useState } from "react";
 import { DebitCard } from "@/components/debits/debit-card";
+import { FilterSearch } from "@/components/ui/filter-search";
 import { FilterSelect } from "@/components/ui/filter-select";
 import {
     DEBIT_STATUS_FILTERS,
@@ -23,13 +24,19 @@ export function DebitList({ debits, debtors }: DebitListProps) {
     const [filters, setFilters] = useState<DebitFilters>(DEFAULT_DEBIT_FILTERS);
 
     const visible = filterDebits(debits, filters);
-    const isFiltered =
-        filters.status !== DEFAULT_DEBIT_FILTERS.status ||
-        filters.debtorId !== DEFAULT_DEBIT_FILTERS.debtorId;
+    const isFiltered = (Object.keys(filters) as (keyof DebitFilters)[]).some(
+        (key) => filters[key] !== DEFAULT_DEBIT_FILTERS[key],
+    );
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="grid gap-3 sm:grid-cols-2 lg:max-w-xl">
+            <div className="grid gap-3 sm:grid-cols-3 lg:max-w-3xl">
+                <FilterSearch
+                    label="Débito"
+                    placeholder="Ex: Ar condicionado"
+                    value={filters.search}
+                    onChange={(search) => setFilters((current) => ({ ...current, search }))}
+                />
                 <FilterSelect
                     label="Situação"
                     value={filters.status}
