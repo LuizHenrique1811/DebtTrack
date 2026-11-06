@@ -1,6 +1,7 @@
 "use client";
 
 import type { InstallmentStatus } from "@prisma/client";
+import { ROW_COLUMNS } from "@/components/installment/installment-columns";
 import { PaymentDialog } from "@/components/payment/payment-dialog";
 import { PaymentHistoryDialog } from "@/components/payment/payment-history-dialog";
 import type { InstallmentView } from "@/core/installment/installment.service";
@@ -24,10 +25,6 @@ const statusClassName: Record<InstallmentStatus, string> = {
     CANCELLED:
         "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
 };
-
-// Colunas no desktop, compartilhadas com o cabeçalho da lista.
-export const ROW_COLUMNS =
-    "lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.2fr)_6.5rem_6rem_7.5rem_6rem_11rem]";
 
 export function InstallmentRow({ installment }: { installment: InstallmentView }) {
     const { status, paidAmount, remainingAmount, payments } = installment;

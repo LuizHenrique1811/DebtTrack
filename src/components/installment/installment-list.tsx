@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { InstallmentRow, ROW_COLUMNS } from "@/components/installment/installment-row";
+import { ROW_COLUMNS } from "@/components/installment/installment-columns";
+import { InstallmentRow } from "@/components/installment/installment-row";
+import { FilterSearch } from "@/components/ui/filter-search";
 import { FilterSelect } from "@/components/ui/filter-select";
 import {
     DEFAULT_FILTERS,
@@ -30,7 +32,13 @@ export function InstallmentList({ installments }: { installments: InstallmentVie
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <FilterSearch
+                    label="Débito"
+                    placeholder="Ex: Ar condicionado"
+                    value={filters.search}
+                    onChange={(search) => updateFilter({ search })}
+                />
                 <FilterSelect
                     label="Situação"
                     value={filters.status}
