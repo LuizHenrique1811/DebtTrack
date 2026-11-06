@@ -12,7 +12,10 @@ export async function getDebits(userId: string) {
     },
     include: {
       debtor: true,
-      installments: { select: { _count: { select: { payments: true } } } },
+      installments: {
+        select: { dueDate: true, _count: { select: { payments: true } } },
+        orderBy: { dueDate: "asc" },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -21,6 +24,8 @@ export async function getDebits(userId: string) {
     ...debit,
     // Decimal não pode ser enviado para componentes de cliente.
     totalAmount: debit.totalAmount.toNumber(),
+    // O ano não é gravado no débito: vem da primeira parcela.
+    startYear: installments[0]?.dueDate.getUTCFullYear() ?? debit.createdAt.getUTCFullYear(),
     paymentCount: installments.reduce(
       (total, installment) => total + installment._count.payments,
       0,
@@ -54,6 +59,7 @@ export async function createDebit(userId: string, data: DebitSchema) {
         totalAmount: Number(data.totalAmount),
         installmentQty: data.installmentQty,
         startMonth: data.startMonth,
+        startYear: data.startYear,
         dueDay: data.dueDay,
         debitId: debit.id,
     });
@@ -80,10 +86,17 @@ export async function updateDebit(userId: string, debitId: string, data: DebitSc
 
     if (!debtor) throw new DebitError("Devedor não encontrado");
 
+    const firstInstallment = await tx.installment.findFirst({
+      where: { debitId },
+      orderBy: { dueDate: "asc" },
+      select: { dueDate: true },
+    });
+
     const changesInstallments =
       !debit.totalAmount.equals(data.totalAmount) ||
       debit.installmentQty !== data.installmentQty ||
       debit.startMonth !== data.startMonth ||
+      firstInstallment?.dueDate.getUTCFullYear() !== data.startYear ||
       debit.dueDay !== data.dueDay;
 
     if (changesInstallments) {
@@ -117,10 +130,9 @@ export async function updateDebit(userId: string, debitId: string, data: DebitSc
           totalAmount: data.totalAmount,
           installmentQty: data.installmentQty,
           startMonth: data.startMonth,
+          startYear: data.startYear,
           dueDay: data.dueDay,
           debitId,
-          // Mantém o ano de referência: editar depois não adia as parcelas.
-          now: debit.createdAt,
         }),
       });
     }

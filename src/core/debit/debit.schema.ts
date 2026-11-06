@@ -16,6 +16,11 @@ export const debitSchema = z.object({
         .int({ message: "Mês de início inválido" })
         .min(1, { message: "Data de início é obrigatória" })
         .max(12, { message: "Mês de início inválido" }),
+    startYear: z.coerce
+        .number()
+        .int({ message: "Ano de início inválido" })
+        .min(2000, { message: "Ano de início inválido" })
+        .max(2100, { message: "Ano de início inválido" }),
     dueDay: z.coerce
         .number()
         .int({ message: "Dia de vencimento inválido" })

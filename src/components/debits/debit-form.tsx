@@ -1,6 +1,6 @@
 "use client";
 
-import { formatCurrency, parseCurrency } from "@/lib/utils"
+import { formatCurrency, getTodayDateKey, parseCurrency } from "@/lib/utils"
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +12,7 @@ import { DebtorSelect } from "@/components/debtor/debtor-select"
 import { Button } from "@/components/ui/button";
 import { MonthSelect } from "@/components/ui/month-select";
 import { DaySelect } from "@/components/ui/day-select";
+import { YearSelect } from "@/components/ui/year-select";
 
 interface DebitFormProps {
     debit?: DebitView;
@@ -39,9 +40,10 @@ export function DebitForm({ debit, debtors = [], onSuccess }: DebitFormProps) {
                   totalAmount: debit.totalAmount,
                   installmentQty: debit.installmentQty,
                   startMonth: debit.startMonth,
+                  startYear: debit.startYear,
                   dueDay: debit.dueDay,
               }
-            : { installmentQty: 1 },
+            : { installmentQty: 1, startYear: Number(getTodayDateKey().slice(0, 4)) },
     });
 
     const watchedAmount = watch("totalAmount");
@@ -151,11 +153,17 @@ export function DebitForm({ debit, debtors = [], onSuccess }: DebitFormProps) {
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Datas
                 </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-3">
                     <MonthSelect
                         label="Mês de início"
                         registration={register("startMonth")}
                         error={errors.startMonth?.message}
+                    />
+                    <YearSelect
+                        label="Ano de início"
+                        registration={register("startYear")}
+                        error={errors.startYear?.message}
+                        selectedYear={debit?.startYear}
                     />
                     <DaySelect
                         label="Dia de vencimento"

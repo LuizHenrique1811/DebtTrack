@@ -6,6 +6,7 @@ const validDebit = {
   totalAmount: 300,
   installmentQty: 3,
   startMonth: 1,
+  startYear: 2026,
   dueDay: 15,
 };
 
@@ -26,6 +27,23 @@ describe("debitSchema", () => {
 
     it.each([0, -1, 13, 1.5])("should reject month %d", (startMonth) => {
       expect(fieldErrors({ startMonth })).toHaveProperty("startMonth");
+    });
+  });
+
+  describe("startYear", () => {
+    it.each([2020, 2026, 2030, "2026"])("should accept year %s", (startYear) => {
+      expect(fieldErrors({ startYear })).toEqual({});
+    });
+
+    it.each([0, 26, 1999, 2101, 2026.5, ""])("should reject year %s", (startYear) => {
+      expect(fieldErrors({ startYear })).toHaveProperty("startYear");
+    });
+
+    it("should be required", () => {
+      const { startYear, ...withoutYear } = validDebit;
+
+      expect(startYear).toBeDefined();
+      expect(debitSchema.safeParse(withoutYear).success).toBe(false);
     });
   });
 

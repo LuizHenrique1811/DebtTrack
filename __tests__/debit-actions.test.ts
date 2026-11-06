@@ -56,6 +56,7 @@ describe("Debit creation", () => {
       totalAmount: 301,
       installmentQty: 3,
       startMonth: 1,
+      startYear: 2026,
       dueDay: 15,
     };
 
@@ -93,6 +94,7 @@ describe("Debit creation", () => {
 
     // Verifica as datas de vencimento (startMonth=1 → janeiro, dueDay=15)
     expect(generatedInstallments[0].dueDate).toBeInstanceOf(Date);
+    expect(generatedInstallments[0].dueDate.getFullYear()).toBe(debitData.startYear);
     expect(generatedInstallments[0].dueDate.getMonth() + 1).toBe(debitData.startMonth);
     expect(generatedInstallments[0].dueDate.getDate()).toBe(debitData.dueDay);
   });
@@ -106,6 +108,7 @@ describe("Debit creation", () => {
       totalAmount: 300.99,
       installmentQty: 3,
       startMonth: 1,
+      startYear: 2026,
       dueDay: 15,
     });
 
@@ -121,6 +124,7 @@ describe("Debit creation", () => {
       totalAmount: -100,
       installmentQty: 3,
       startMonth: 1,
+      startYear: 2026,
       dueDay: 15,
     });
 
