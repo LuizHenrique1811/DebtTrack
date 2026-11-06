@@ -111,7 +111,13 @@ function MonthTable({ months }: { months: Month[] }) {
     );
 }
 
-export function ReportByMonth({ months }: { months: Report["months"] }) {
+export function ReportByMonth({
+    months,
+    title = "Por mês",
+}: {
+    months: Report["months"];
+    title?: string;
+}) {
     const chartMax = getChartMax(months);
     const axisValues = [
         { value: chartMax, top: "0%" },
@@ -122,7 +128,7 @@ export function ReportByMonth({ months }: { months: Report["months"] }) {
     return (
         <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Por mês</h2>
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{title}</h2>
                 <ul className="flex gap-4 text-sm text-zinc-600 dark:text-zinc-400">
                     <li className="flex items-center gap-2">
                         <span className={`h-2.5 w-2.5 rounded-sm ${EXPECTED_COLOR}`} aria-hidden />
