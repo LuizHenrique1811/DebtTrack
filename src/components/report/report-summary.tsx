@@ -5,13 +5,13 @@ import { formatCurrency } from "@/lib/utils";
 
 export function StatTile({ label, value, note }: { label: string; value: string; note?: ReactNode }) {
     return (
-        <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">{label}</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-50">
+            <p className="mt-1 text-lg font-semibold tabular-nums text-zinc-900 sm:text-2xl dark:text-zinc-50">
                 {value}
             </p>
             {note ? (
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="mt-1 flex items-center gap-1.5 text-xs text-zinc-600 sm:text-sm dark:text-zinc-400">
                     {note}
                 </p>
             ) : null}
@@ -24,7 +24,7 @@ export function ReportSummary({ summary }: { summary: Report["summary"] }) {
     const { overdueCount } = summary;
 
     return (
-        <section aria-label="Resumo" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section aria-label="Resumo" className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             <StatTile label="Total emprestado" value={formatCurrency(summary.total)} />
             <StatTile
                 label="Recebido"

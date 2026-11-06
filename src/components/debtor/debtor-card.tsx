@@ -38,9 +38,17 @@ export function DebtorCard({ debtor }: { debtor: Debtor }) {
                         </a>
                     ) : null}
                 </div>
-                <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100" >
+                <div className="flex shrink-0 items-center gap-1 transition-opacity focus-within:opacity-100 group-hover:opacity-100 [@media(hover:hover)]:opacity-0">
                     <DebtorDialog className="max-w-2xl" debtor={debtor} />
-                    <Trash onClick={() => deleteDebtorAction(debtor.id)} className="w-4 h-4 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400" />
+                    <button
+                        type="button"
+                        onClick={() => deleteDebtorAction(debtor.id)}
+                        aria-label={`Excluir devedor ${debtor.name}`}
+                        title="Excluir devedor"
+                        className="rounded-md p-2.5 text-zinc-600 transition-colors hover:text-red-600 md:p-1 dark:text-zinc-400 dark:hover:text-red-400"
+                    >
+                        <Trash className="h-4 w-4" />
+                    </button>
                 </div>
             </div>
         </article>

@@ -9,9 +9,9 @@ export default async function DashboardLayout({
     const user = await getCurrentUser();
 
     return (
-        <div className="flex min-h-screen flex-col md:flex-row">
+        <div className="flex min-h-dvh flex-col md:flex-row">
             <DashboardNav userEmail={user?.email ?? null} />
-            <main className="flex-1 overflow-auto bg-background p-6">
+            <main className="flex-1 overflow-auto bg-background p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:p-6">
                 {children}
             </main>
         </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { DebtorForm } from "@/components/debtor/debtor-form";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Debtor } from "@prisma/client";
@@ -12,7 +14,14 @@ export function DebtorDialog({ className, debtor }: { className?: string, debtor
         <Dialog>
             <DialogTrigger asChild>
                 {isEditing ? (
-                    <Pencil className="w-4 h-4 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400" />
+                    <button
+                        type="button"
+                        aria-label={`Editar devedor ${debtor.name}`}
+                        title="Editar devedor"
+                        className="rounded-md p-2.5 text-zinc-600 transition-colors hover:text-emerald-600 md:p-1 dark:text-zinc-400 dark:hover:text-emerald-400"
+                    >
+                        <Pencil className="h-4 w-4" />
+                    </button>
                 ) : (
                     <Button variant="green" className="w-fit flex items-center gap-2">
                         <Plus className="w-4 h-4" />

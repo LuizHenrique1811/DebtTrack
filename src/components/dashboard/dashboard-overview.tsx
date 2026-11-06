@@ -15,7 +15,7 @@ export function DashboardOverview({ dashboard }: { dashboard: Dashboard }) {
 
     return (
         <>
-            <section aria-label="Resumo" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section aria-label="Resumo" className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
                 <StatTile
                     label="A receber"
                     value={formatCurrency(summary.remaining)}

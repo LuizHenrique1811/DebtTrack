@@ -20,7 +20,7 @@ function getChartMax(months: Month[]) {
 
 function getTooltipPosition(index: number, total: number) {
     if (index < 3) return "left-0";
-    if (index >= total - 3) return "right-0";
+    if (index >= total - 4) return "right-0";
 
     return "left-1/2 -translate-x-1/2";
 }
@@ -59,7 +59,7 @@ function MonthColumn({
             <Column value={month.received} chartMax={chartMax} color={RECEIVED_COLOR} />
             <div
                 role="tooltip"
-                className={`pointer-events-none absolute bottom-full z-10 mb-2 hidden w-48 rounded-lg border border-zinc-200 bg-white p-3 text-sm shadow-lg group-hover:block group-focus-visible:block dark:border-zinc-700 dark:bg-zinc-800 ${tooltipPosition}`}
+                className={`pointer-events-none absolute bottom-full z-10 mb-2 hidden w-48 rounded-lg border border-zinc-200 bg-white p-3 text-sm shadow-lg group-hover:block group-focus:block dark:border-zinc-700 dark:bg-zinc-800 ${tooltipPosition}`}
             >
                 <p className="mb-1 font-medium text-zinc-600 dark:text-zinc-300">{title}</p>
                 <p className="flex items-center gap-2 text-zinc-600 dark:text-zinc-300">

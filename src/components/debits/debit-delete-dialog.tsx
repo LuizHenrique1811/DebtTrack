@@ -29,7 +29,7 @@ export function DebitDeleteDialog({ debit }: { debit: DebitView }) {
                     type="button"
                     aria-label={`Excluir débito ${debit.description}`}
                     title="Excluir débito"
-                    className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-400"
+                    className="rounded-md p-2.5 text-zinc-500 md:p-1.5 transition-colors hover:bg-zinc-100 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-400"
                 >
                     <Trash2 className="h-4 w-4" />
                 </button>
