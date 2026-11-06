@@ -300,6 +300,19 @@ describe("filterDebits", () => {
     expect(filtered({ status: "ACTIVE", debtorId: "ana" })).toEqual(["a"]);
   });
 
+  it("should search by debit name, ignoring case and accents", () => {
+    const named = [
+      { ...debit("ar", "ACTIVE", "ana", "Ana"), description: "Ar condicionado" },
+      { ...debit("emprestimo", "ACTIVE", "ana", "Ana"), description: "Empréstimo" },
+    ];
+    const search = (text: string) =>
+      filterDebits(named, { ...DEFAULT_DEBIT_FILTERS, search: text }).map((item) => item.id);
+
+    expect(search("ar cond")).toEqual(["ar"]);
+    expect(search("  EMPRESTIMO ")).toEqual(["emprestimo"]);
+    expect(search("geladeira")).toEqual([]);
+  });
+
   it("should list each debtor once, in alphabetical order", () => {
     expect(getDebitDebtors(debits)).toEqual([
       { id: "ana", name: "Ana" },

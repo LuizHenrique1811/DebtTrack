@@ -69,3 +69,16 @@ export function getTodayDateKey(now = new Date()) {
         timeZone: "America/Sao_Paulo",
     }).format(now);
 }
+
+function normalizeSearchText(text: string) {
+    return text
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .toLowerCase()
+        .trim();
+}
+
+// Ignora acentos e maiúsculas: "emprestimo" encontra "Empréstimo".
+export function matchesSearch(text: string, search: string) {
+    return normalizeSearchText(text).includes(normalizeSearchText(search));
+}

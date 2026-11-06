@@ -69,6 +69,17 @@ describe("filterInstallments", () => {
     expect(filtered(list, { debtorId: "bia" })).toEqual(["b"]);
   });
 
+  it("should search by debit name, ignoring case and accents", () => {
+    const list = [
+      installment({ id: "ar", description: "Ar condicionado" }),
+      installment({ id: "emprestimo", description: "Empréstimo" }),
+    ];
+
+    expect(filtered(list, { search: "ar cond" })).toEqual(["ar"]);
+    expect(filtered(list, { search: "  EMPRESTIMO " })).toEqual(["emprestimo"]);
+    expect(filtered(list, { search: "geladeira" })).toEqual([]);
+  });
+
   it("should combine the filters", () => {
     const list = [
       installment({ id: "certa", debtorId: "bia", status: "OVERDUE" }),

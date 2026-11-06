@@ -1,4 +1,5 @@
 import type { InstallmentView } from "@/core/installment/installment.service";
+import { matchesSearch } from "@/lib/utils";
 
 export const STATUS_FILTERS = [
     { value: "OPEN", label: "Em aberto" },
@@ -10,12 +11,14 @@ export const STATUS_FILTERS = [
 export type StatusFilter = (typeof STATUS_FILTERS)[number]["value"];
 
 export interface InstallmentFilters {
+    search: string;
     status: StatusFilter;
     month: string;
     debtorId: string;
 }
 
 export const DEFAULT_FILTERS: InstallmentFilters = {
+    search: "",
     status: "OPEN",
     month: "",
     debtorId: "",
@@ -35,6 +38,7 @@ function matchesStatus(status: InstallmentView["status"], filter: StatusFilter) 
 export function filterInstallments(installments: InstallmentView[], filters: InstallmentFilters) {
     return installments.filter(
         (installment) =>
+            (!filters.search || matchesSearch(installment.description, filters.search)) &&
             matchesStatus(installment.status, filters.status) &&
             (!filters.month || getMonthKey(installment.dueDate) === filters.month) &&
             (!filters.debtorId || installment.debtorId === filters.debtorId),
