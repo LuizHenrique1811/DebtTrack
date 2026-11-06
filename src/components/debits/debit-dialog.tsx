@@ -25,7 +25,7 @@ export function DebitDialog({ debtors = [], debit }: DebitDialogProps) {
                         type="button"
                         aria-label={`Editar débito ${debit.description}`}
                         title="Editar débito"
-                        className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                        className="rounded-md p-2.5 text-zinc-500 md:p-1.5 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
                     >
                         <Pencil className="h-4 w-4" />
                     </button>
