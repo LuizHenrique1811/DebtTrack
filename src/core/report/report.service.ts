@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { buildReport } from "@/core/report/report-calculator";
 
-export async function listReportInstallments(userId: string) {
+export async function listReportInstallments(userId: string, debtorId?: string) {
     const installments = await prisma.installment.findMany({
         where: {
             debit: {
                 debtor: {
                     userId,
+                    id: debtorId,
                 },
             },
         },

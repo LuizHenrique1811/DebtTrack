@@ -115,6 +115,7 @@ pnpm exec jest
 - [x] Relatórios com resumo financeiro, lista de cobrança do mês, visão mensal e por devedor
 - [x] Filtros em parcelas e débitos; edição e exclusão de débitos, protegendo os que têm pagamentos
 - [x] Dashboard inicial com totais, parcelas em atraso, vencimentos da semana e saldo por devedor
+- [x] Cobrança por devedor com as parcelas do mês e em atraso, enviada pelo WhatsApp ou copiada
 
 ### Em andamento / pendente
 

@@ -59,10 +59,10 @@ export function DebtorForm({ debtor }: { debtor?: Debtor }) {
             />
             <Input label="Telefone"
                 type="tel"
-                placeholder="(12) 34567-890"
+                placeholder="(12) 34567-8901"
                 size={20}
                 minLength={9}
-                maxLength={14}
+                maxLength={15}
                 registration={register("phone")}
                 error={errors.phone?.message}
                 defaultValue={debtor?.phone ?? ""}

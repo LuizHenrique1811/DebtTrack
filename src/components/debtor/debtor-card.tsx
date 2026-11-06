@@ -4,6 +4,7 @@ import { Debtor } from "@prisma/client";
 import { deleteDebtorAction } from "@/actions/debtor/debtor.action";
 import { User, Mail, Phone, Trash } from "lucide-react";
 import { DebtorDialog } from "@/components/debtor/debtor-dialog";
+import { ChargeDialog } from "@/components/charge/charge-dialog";
 
 export function DebtorCard({ debtor }: { debtor: Debtor }) {
     return (
@@ -39,6 +40,7 @@ export function DebtorCard({ debtor }: { debtor: Debtor }) {
                     ) : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-1 transition-opacity focus-within:opacity-100 group-hover:opacity-100 [@media(hover:hover)]:opacity-0">
+                    <ChargeDialog debtorId={debtor.id} debtorName={debtor.name} variant="icon" />
                     <DebtorDialog className="max-w-2xl" debtor={debtor} />
                     <button
                         type="button"

@@ -42,7 +42,7 @@ function getMonthKeys(todayKey: string) {
     );
 }
 
-const toMonthKey = (date: Date) => date.toISOString().slice(0, 7);
+export const toMonthKey = (date: Date) => date.toISOString().slice(0, 7);
 
 const sumRemaining = (items: CollectionItem[]) =>
     items.reduce((total, item) => total.plus(item.remaining), ZERO);
