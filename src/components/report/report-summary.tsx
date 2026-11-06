@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { Report } from "@/core/report/report-calculator";
 import { formatCurrency } from "@/lib/utils";
 
-function StatTile({ label, value, note }: { label: string; value: string; note?: ReactNode }) {
+export function StatTile({ label, value, note }: { label: string; value: string; note?: ReactNode }) {
     return (
         <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">{label}</p>

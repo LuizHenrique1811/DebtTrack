@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { buildReport } from "@/core/report/report-calculator";
 
-export async function getReport(userId: string) {
+export async function listReportInstallments(userId: string) {
     const installments = await prisma.installment.findMany({
         where: {
             debit: {
@@ -27,13 +27,15 @@ export async function getReport(userId: string) {
         },
     });
 
-    return buildReport(
-        installments.map(({ debit, ...installment }) => ({
-            ...installment,
-            description: debit.description,
-            installmentQty: debit.installmentQty,
-            debtorId: debit.debtor.id,
-            debtorName: debit.debtor.name,
-        })),
-    );
+    return installments.map(({ debit, ...installment }) => ({
+        ...installment,
+        description: debit.description,
+        installmentQty: debit.installmentQty,
+        debtorId: debit.debtor.id,
+        debtorName: debit.debtor.name,
+    }));
+}
+
+export async function getReport(userId: string) {
+    return buildReport(await listReportInstallments(userId));
 }

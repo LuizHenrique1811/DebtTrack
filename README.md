@@ -114,6 +114,7 @@ pnpm exec jest
 - [x] Status de atraso calculado na leitura, no fuso de São Paulo
 - [x] Relatórios com resumo financeiro, lista de cobrança do mês, visão mensal e por devedor
 - [x] Filtros em parcelas e débitos; edição e exclusão de débitos, protegendo os que têm pagamentos
+- [x] Dashboard inicial com totais, parcelas em atraso, vencimentos da semana e saldo por devedor
 
 ### Em andamento / pendente
 
