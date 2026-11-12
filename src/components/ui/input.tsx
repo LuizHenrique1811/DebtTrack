@@ -7,8 +7,10 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   registration?: UseFormRegisterReturn; 
 }
 
-export function Input({ label, error, registration, className, defaultValue, ...props }: FormInputProps) {
-  
+export function Input({ label, error, registration, className, defaultValue, inputMode, ...props }: FormInputProps) {
+  // type="number" sozinho abre o teclado completo no iOS; inputMode garante o teclado numérico
+  const resolvedInputMode = inputMode ?? (props.type === "number" ? "numeric" : undefined);
+
   const inputId = props.id || registration?.name || useId();
 
   return (
@@ -20,6 +22,7 @@ export function Input({ label, error, registration, className, defaultValue, ...
         id={inputId}
         {...registration}
         {...props}
+        inputMode={resolvedInputMode}
         defaultValue={defaultValue}
         className={`w-full rounded-lg border bg-white px-3 py-2.5 text-base text-zinc-900 shadow-sm transition-colors placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-400 dark:focus:ring-zinc-500 ${
           error ? "border-red-500 dark:border-red-400" : "border-zinc-300 dark:border-zinc-600"
