@@ -123,6 +123,7 @@ export function DebitForm({ debit, debtors = [], onSuccess }: DebitFormProps) {
                             <Input
                                 label="Valor total"
                                 type="text"
+                                inputMode="numeric"
                                 placeholder="0,00"
                                 name={field.name}
                                 value={formatCurrency(field.value)}
@@ -134,6 +135,7 @@ export function DebitForm({ debit, debtors = [], onSuccess }: DebitFormProps) {
                     <Input
                         label="Quantidade de parcelas"
                         type="number"
+                        pattern="[0-9]*"
                         min="01"
                         registration={register("installmentQty")}
                         error={errors.installmentQty?.message}
