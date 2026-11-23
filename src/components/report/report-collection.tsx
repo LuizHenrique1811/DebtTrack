@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { ChargeDialog } from "@/components/charge/charge-dialog";
 import type { Report } from "@/core/report/report-calculator";
 import { formatCurrency, formatMonthPt } from "@/lib/utils";
@@ -98,6 +99,13 @@ export function ReportCollection({ collection }: { collection: Report["collectio
                     </p>
                 ) : null}
             </div>
+            <Link
+                href="/dashboard/charges"
+                className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
+            >
+                Montar cobrança por período, pessoa ou débito
+                <ChevronRight className="h-4 w-4" aria-hidden />
+            </Link>
             {collection.debtors.length > 0 ? (
                 <ul>
                     {collection.debtors.map((debtor) => (

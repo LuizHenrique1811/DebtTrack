@@ -8,9 +8,9 @@ import {
     getTodayDateKey,
 } from "@/lib/utils";
 
-const BRAZIL_COUNTRY_CODE = "55";
+export { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-interface ChargeItem {
+export interface ChargeItem {
     id: string;
     description: string;
     installmentNumber: number;
@@ -63,7 +63,7 @@ export function buildCharge(installments: ReportInstallment[], now = new Date())
 
 export type Charge = ReturnType<typeof buildCharge>;
 
-function formatItem(item: ChargeItem, dueLabel: string) {
+export function formatChargeItem(item: ChargeItem, dueLabel: string) {
     const value =
         item.remaining < item.amount
             ? `${formatCurrency(item.remaining)} (restante de ${formatCurrency(item.amount)})`
@@ -73,8 +73,8 @@ function formatItem(item: ChargeItem, dueLabel: string) {
 }
 
 export function buildChargeMessage(debtorName: string, charge: Charge) {
-    const currentLines = charge.current.map((item) => formatItem(item, "vence"));
-    const overdueLines = charge.overdue.map((item) => formatItem(item, "venceu"));
+    const currentLines = charge.current.map((item) => formatChargeItem(item, "vence"));
+    const overdueLines = charge.overdue.map((item) => formatChargeItem(item, "venceu"));
 
     const blocks =
         overdueLines.length > 0
@@ -91,26 +91,4 @@ export function buildChargeMessage(debtorName: string, charge: Charge) {
         ...blocks,
         `Total a pagar: ${formatCurrency(charge.total)}`,
     ].join("\n\n");
-}
-
-// O telefone é texto livre no cadastro, então só vira link quando dá para
-// reconhecer o número completo: DDD + número, com ou sem o código do país.
-function toWhatsAppNumber(phone: string) {
-    const digits = phone.replace(/\D/g, "");
-
-    if (digits.length === 10 || digits.length === 11) {
-        return `${BRAZIL_COUNTRY_CODE}${digits}`;
-    }
-
-    const hasCountryCode =
-        (digits.length === 12 || digits.length === 13) &&
-        digits.startsWith(BRAZIL_COUNTRY_CODE);
-
-    return hasCountryCode ? digits : null;
-}
-
-export function buildWhatsAppUrl(phone: string | null, message: string) {
-    const number = toWhatsAppNumber(phone ?? "");
-
-    return number ? `https://wa.me/${number}?text=${encodeURIComponent(message)}` : null;
 }

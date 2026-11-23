@@ -318,7 +318,28 @@ function ReportsSkeleton() {
     );
 }
 
+function ChargesSkeleton() {
+    return (
+        <PageSkeleton>
+            <PageHeader title="Cobranças" hasAction />
+            <div className="flex flex-wrap gap-2">
+                {repeat(5, (index) => (
+                    <Skeleton key={index} className="h-8 w-28 rounded-full" />
+                ))}
+            </div>
+            <FiltersSkeleton count={3} className="sm:grid-cols-3 lg:max-w-4xl" />
+            <StatTilesSkeleton />
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                {repeat(2, (index) => (
+                    <CollectionSkeleton key={index} />
+                ))}
+            </div>
+        </PageSkeleton>
+    );
+}
+
 const PAGE_SKELETONS: Record<string, ReactNode> = {
+    "/dashboard/charges": <ChargesSkeleton />,
     "/dashboard/debtors": <DebtorsSkeleton />,
     "/dashboard/debits": <DebitsSkeleton />,
     "/dashboard/installments": <InstallmentsSkeleton />,

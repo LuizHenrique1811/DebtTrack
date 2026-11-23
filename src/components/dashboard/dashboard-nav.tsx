@@ -10,6 +10,7 @@ import {
     BarChart3,
     LogOut,
     CreditCard,
+    Send,
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +18,7 @@ const navItems = [
     { href: "/dashboard/debtors", label: "Devedores", icon: Users },
     { href: "/dashboard/debits", label: "Débitos", icon: Receipt },
     { href: "/dashboard/installments", label: "Parcelas", icon: CreditCard },
+    { href: "/dashboard/charges", label: "Cobranças", icon: Send },
     { href: "/dashboard/reports", label: "Relatórios", icon: BarChart3 },
 ];
 
@@ -37,7 +39,7 @@ function LogoutForm({ className }: { className: string }) {
 
 function Sidebar({ pathname, userEmail }: { pathname: string; userEmail?: string | null }) {
     return (
-        <aside className="hidden w-56 flex-col border-r border-neutral-200 bg-neutral-50 md:flex dark:border-neutral-800 dark:bg-neutral-900/40">
+        <aside className="hidden w-56 flex-col border-r border-neutral-200 bg-neutral-50 md:flex print:hidden dark:border-neutral-800 dark:bg-neutral-900/40">
             <nav aria-label="Navegação principal" className="flex flex-1 flex-col gap-1 p-3">
                 {navItems.map(({ href, label, icon: Icon }) => {
                     const isActive = isActivePath(pathname, href);
@@ -71,7 +73,7 @@ function Sidebar({ pathname, userEmail }: { pathname: string; userEmail?: string
 
 function MobileHeader({ userEmail }: { userEmail?: string | null }) {
     return (
-        <header className="flex items-center justify-between gap-3 border-b border-neutral-200 bg-neutral-50 px-4 py-2 md:hidden dark:border-neutral-800 dark:bg-neutral-900/40">
+        <header className="flex items-center justify-between gap-3 border-b border-neutral-200 bg-neutral-50 px-4 py-2 md:hidden print:hidden dark:border-neutral-800 dark:bg-neutral-900/40">
             <div className="min-w-0">
                 <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">DebtTrack</p>
                 {userEmail && (
@@ -87,7 +89,7 @@ function BottomNav({ pathname }: { pathname: string }) {
     return (
         <nav
             aria-label="Navegação principal"
-            className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-neutral-200 bg-neutral-50 pb-[env(safe-area-inset-bottom)] md:hidden dark:border-neutral-800 dark:bg-neutral-900"
+            className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-neutral-200 bg-neutral-50 pb-[env(safe-area-inset-bottom)] md:hidden print:hidden dark:border-neutral-800 dark:bg-neutral-900"
         >
             {navItems.map(({ href, label, icon: Icon }) => {
                 const isActive = isActivePath(pathname, href);
